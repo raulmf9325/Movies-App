@@ -53,8 +53,9 @@ class RootController: UIViewController{
 
 extension RootController: FeaturedDelegate{
    
-    func toggleMenu() {
-        
+   @objc func toggleMenu() {
+    
+        // Menu is Collapsed
         if menuState == .collapsed{
             UIView.animate(withDuration: 0.5,
                            delay: 0,
@@ -62,9 +63,16 @@ extension RootController: FeaturedDelegate{
                            initialSpringVelocity: 0,
                            options: .curveEaseInOut, animations: {
                             self.featuredNavigationController.view.frame.origin.x = self.view.frame.width - self.menuExpandedOffSet
+                            self.featured.navBar.frame.origin.x = 16
             }, completion: nil)
+            // Mark Menu as Expanded
             menuState = .expanded
+            // Disable FeaturedController Interaction
+            featured.collectionView.isUserInteractionEnabled = false
+            // ADD Tap Gesture For Collapsing Menu
+            featuredNavigationController.view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggleMenu)))
         }
+        // Menu is Expanded
         else{
             UIView.animate(withDuration: 0.5,
                            delay: 0,
@@ -72,8 +80,20 @@ extension RootController: FeaturedDelegate{
                            initialSpringVelocity: 0,
                            options: .curveEaseInOut, animations: {
                             self.featuredNavigationController.view.frame.origin.x = 0
+                            self.featured.navBar.frame.origin.x = 0
             }, completion: nil)
+            // Mark Menu as Collapsed
             menuState = .collapsed
+            // Enable FeaturedController Interaction
+            featured.collectionView.isUserInteractionEnabled = true
+            // REMOVE Tap Gesture
+            if let gestureRecognizers = featuredNavigationController.view.gestureRecognizers{
+                for gesture in gestureRecognizers{
+                    if gesture is UITapGestureRecognizer{
+                        featuredNavigationController.view.removeGestureRecognizer(gesture)
+                    }
+                }
+            }
         }
     }
     

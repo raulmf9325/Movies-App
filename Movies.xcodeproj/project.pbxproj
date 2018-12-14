@@ -15,6 +15,7 @@
 		3EA7B6F021BE18F1004FE49A /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA7B6EF21BE18F1004FE49A /* Menu.swift */; };
 		3EA7B6F221BE1BF5004FE49A /* Featured.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA7B6F121BE1BF5004FE49A /* Featured.swift */; };
 		3EA7B6F521BE3967004FE49A /* ViewExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EA7B6F421BE3967004FE49A /* ViewExtension.swift */; };
+		3ED180BF21C0D1C7009F6F23 /* FeaturedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED180BE21C0D1C7009F6F23 /* FeaturedCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -28,6 +29,7 @@
 		3EA7B6EF21BE18F1004FE49A /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		3EA7B6F121BE1BF5004FE49A /* Featured.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Featured.swift; sourceTree = "<group>"; };
 		3EA7B6F421BE3967004FE49A /* ViewExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewExtension.swift; sourceTree = "<group>"; };
+		3ED180BE21C0D1C7009F6F23 /* FeaturedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -101,6 +103,7 @@
 			children = (
 				3EA7B6EF21BE18F1004FE49A /* Menu.swift */,
 				3EA7B6F121BE1BF5004FE49A /* Featured.swift */,
+				3ED180BE21C0D1C7009F6F23 /* FeaturedCell.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -187,6 +190,7 @@
 				3EA7B6F021BE18F1004FE49A /* Menu.swift in Sources */,
 				3EA7B6F221BE1BF5004FE49A /* Featured.swift in Sources */,
 				3EA7B6D421BD9CEC004FE49A /* AppDelegate.swift in Sources */,
+				3ED180BF21C0D1C7009F6F23 /* FeaturedCell.swift in Sources */,
 				3EA7B6E821BDDCD3004FE49A /* RootController.swift in Sources */,
 				3EA7B6F521BE3967004FE49A /* ViewExtension.swift in Sources */,
 			);
