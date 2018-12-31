@@ -14,6 +14,7 @@ class RootController: UIViewController{
     var featured: Featured!
     var featuredNavigationController: UINavigationController!
     let menuExpandedOffSet: CGFloat = 130
+    var navBar: NavigationBar!
     
     enum SlideOutState{
         case collapsed
@@ -25,16 +26,17 @@ class RootController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+       // setupNavigationBar()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle{
         return .lightContent
     }
     
-    private func setupViews(){
+    fileprivate func setupViews(){
         // instantiate featured and menu controllers
         featured = Featured(collectionViewLayout: UICollectionViewFlowLayout())
-        featuredNavigationController  = UINavigationController(rootViewController: featured)
+        featuredNavigationController = UINavigationController(rootViewController: featured)
         featured.delegate = self
         menu = Menu()
         
@@ -42,9 +44,10 @@ class RootController: UIViewController{
         view.insertSubview(menu.view, at: 0)
         view.addSubview(featuredNavigationController.view)
         
-        // add featured as child controller
-//        addChild(featured)
-//        featured.didMove(toParent: self)
+    }
+    
+    fileprivate func setupNavigationBar(){
+        navBar = NavigationBar(delegate: self, viewController: self)
     }
 
     
@@ -63,7 +66,7 @@ extension RootController: FeaturedDelegate{
                            initialSpringVelocity: 0,
                            options: .curveEaseInOut, animations: {
                             self.featuredNavigationController.view.frame.origin.x = self.view.frame.width - self.menuExpandedOffSet
-                            self.featured.navBar.frame.origin.x = 16
+                            self.featured.navBar.navBar.frame.origin.x = 16
             }, completion: nil)
             // Mark Menu as Expanded
             menuState = .expanded
@@ -80,7 +83,7 @@ extension RootController: FeaturedDelegate{
                            initialSpringVelocity: 0,
                            options: .curveEaseInOut, animations: {
                             self.featuredNavigationController.view.frame.origin.x = 0
-                            self.featured.navBar.frame.origin.x = 0
+                            self.featured.navBar.navBar.frame.origin.x = 0
             }, completion: nil)
             // Mark Menu as Collapsed
             menuState = .collapsed
@@ -98,3 +101,19 @@ extension RootController: FeaturedDelegate{
     }
     
 } // End of Extensiom
+
+extension RootController: NavigationProtocol{
+    
+     func handleHamburgerTap(){
+        featured.handleHamburgerTap()
+    }
+    
+     func handleIconView(){
+        featured.handleIconView()
+    }
+    
+     func handleMagnifierTap(){
+        
+    }
+    
+}

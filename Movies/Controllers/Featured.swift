@@ -9,51 +9,13 @@
 import UIKit
 
 // MARK: Featured view controller
-class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout{
+class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, NavigationProtocol{
     
     // delegate object for handling callbacks
     var delegate: FeaturedDelegate?
     
     // Number of Items In Section
     var numberOfItemsInSection: Int!
-    
-    // navBar view
-    let navBar: UIView = {
-        let bar = UIView()
-        bar.backgroundColor = UIColor(white: 0, alpha: 0.5)
-        return bar
-    }()
-    
-    // navBar left button
-    let navBarLeftButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "Hamburger"), for: .normal)
-        return button
-    }()
-    
-    // navBar iconView button
-    let navBarIconView: UIImageView = {
-        let image = UIImage(named: "iconView")
-        let imageView = UIImageView(image: image)
-        imageView.isUserInteractionEnabled = true
-        return imageView
-    }()
-    
-    // navBar title
-    let navBarTitle: UILabel = {
-        let title = UILabel()
-        title.text = "Featured"
-        title.font = UIFont(name: "HelveticaNeue", size: 20)
-        title.textColor = .white
-        return title
-    }()
-    
-    // navBar RightButtn
-    let navBarRightButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "Magnifier"), for: .normal)
-        return button
-    }()
     
     // Search Text Field
     let searchTextField: UITextField = {
@@ -73,12 +35,18 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     
     var layoutState: gridState!
     
+    var navBar: NavigationBar!
+    
     
     // view did load
     override func viewDidLoad() {
         numberOfItemsInSection = 31
         setupCollectionView()
         setupNavigationBar()
+    }
+    
+    private func setupNavigationBar(){
+        navBar = NavigationBar(delegate: self, viewController: self)
     }
     
     // SetUp Collection View
@@ -93,58 +61,14 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout{
         layout.minimumInteritemSpacing = 10
     }
     
-    
-    // setting up navigation Bar
-    private func setupNavigationBar(){
-      
-        // hide native navigation bar
-        navigationController?.isNavigationBarHidden = true
-        
-        // add navBar view
-        view.addSubview(navBar)
-        navBar.translatesAutoresizingMaskIntoConstraints = false
-        navBar.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-        navBar.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
-        navBar.heightAnchor.constraint(equalToConstant: 75).isActive = true
-        
-        // add blurEffect to navBar
-        let blur = UIBlurEffect(style: .dark)
-        let effectView = UIVisualEffectView(effect: blur)
-        navBar.addSubview(effectView)
-        effectView.translatesAutoresizingMaskIntoConstraints = false
-        effectView.widthAnchor.constraint(equalTo: navBar.widthAnchor).isActive = true
-        effectView.heightAnchor.constraint(equalTo: navBar.heightAnchor).isActive = true
-        
-        // Add NavBar leftButton And IconView Button
-        navBar.addSubview(navBarLeftButton)
-        navBar.addSubview(navBarIconView)
-        navBar.addConstraintsWithFormat(format: "H:|-20-[v0(30)]-25-[v1(23)]", views: navBarLeftButton, navBarIconView)
-        navBar.addConstraintsWithFormat(format: "V:[v0(30)]-8-|", views: navBarLeftButton)
-        navBar.addConstraintsWithFormat(format: "V:[v0(23)]-11-|", views: navBarIconView)
-        navBarLeftButton.addTarget(self, action: #selector(handleHamburgerTap), for: .touchUpInside)
-        navBarIconView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(handleIconView)))
-
-        // add navBar title
-        navBar.addSubview(navBarTitle)
-        let center = view.frame.width / 2
-        navBar.addConstraintsWithFormat(format: "H:|-\(center - 40)-[v0]", views: navBarTitle)
-        navBar.addConstraintsWithFormat(format: "V:[v0]-12-|", views: navBarTitle)
-        
-        // add navBar rightButton
-        navBar.addSubview(navBarRightButton)
-        navBar.addConstraintsWithFormat(format: "H:[v0(30)]-20-|", views: navBarRightButton)
-        navBar.addConstraintsWithFormat(format: "V:[v0(30)]-8-|", views: navBarRightButton)
-        navBarRightButton.addTarget(self, action: #selector(handleMagnifierTap), for: .touchUpInside)
-    }
-    
-    @objc func handleIconView(){
+    func handleIconView(){
         if layoutState == .icons{
             layoutState = .grid
-            navBarIconView.image = UIImage(named: "gridView")
+            navBar.navBarIconView.image = UIImage(named: "gridView")
         }
         else{
             layoutState = .icons
-            navBarIconView.image = UIImage(named: "iconView")
+            navBar.navBarIconView.image = UIImage(named: "iconView")
         }
         UIView.animate(withDuration: 0.2) {
             self.collectionView.reloadData()
@@ -153,7 +77,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     }
     
     // MARK: toggle menu
-    @objc private func handleHamburgerTap(){
+    func handleHamburgerTap(){
         if searchTextField.isFirstResponder{
             dismissSearch()
         }
@@ -177,8 +101,8 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     var listOfVisibleCells: [IndexPath]!
     
     // MARK: insert search box
-    @objc private func handleMagnifierTap(){
-       
+    func handleMagnifierTap(){
+        
         // Retrieve List of Currently Visible Cells
         listOfVisibleCells = collectionView.indexPathsForVisibleItems.sorted()
         // First Visible Cell
@@ -220,7 +144,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout{
         // Disable Collection View Scroll
         collectionView.isScrollEnabled = false
         // Disable Search Button While Search Box Is Active
-        navBarRightButton.isUserInteractionEnabled = false
+        navBar.navBarRightButton.isUserInteractionEnabled = false
         // Add Gesture To Overlay View For Dismissal Of Search
         overlayView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissSearch)))
         // Bring Up Keyboard
@@ -240,7 +164,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout{
             self.searchBoxContainerView.removeFromSuperview()
             self.overlayView.removeFromSuperview()
             self.collectionView.isScrollEnabled = true
-            self.navBarRightButton.isUserInteractionEnabled = true
+            self.navBar.navBarRightButton.isUserInteractionEnabled = true
         }
     }
     
@@ -273,7 +197,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
         return UIEdgeInsets(top: 70, left: 10, bottom: 10, right: 10)
     }
-
+    
     // Size of Cells
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
@@ -287,6 +211,12 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout{
         }
         let width = Int ((view.frame.width - (2 * spaceBetweenCells + 2 * insets)) / numberOfCellsInRow)
         return CGSize(width: width, height: height)
+    }
+    
+    // Present Movie Details
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
+        navigationController?.pushViewController(movieDetails, animated: true)
     }
     
 } // END: Featured Controller
