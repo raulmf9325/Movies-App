@@ -11,8 +11,27 @@ import UIKit
 // MARK: MovieDetails Class
 class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     
+    var movieName: String?
+    var movieImage: UIImage?
+    var movieRating: Double?
+    var releaseDate: String?
+    var plot: String?
+    var genre: String?
+    var cast: [Cast]?
+    var duration: String?{
+        didSet{
+            collectionView.reloadData()
+        }
+    }
+    
     let headerId = "headerId"
-    let padding: CGFloat = 16
+    
+    enum animationState{
+        case Animated
+        case notAnimated
+    }
+    
+    var animatedCells = [animationState]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,13 +40,15 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     }
     
     fileprivate func setupCollectionView(){
+        collectionView.backgroundColor = .white
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "CellId")
-        
-        if let layout = collectionViewLayout as? UICollectionViewFlowLayout{
-            layout.sectionInset = .init(top: padding, left: padding, bottom: padding, right: padding)
-        }
+        collectionView.register(FirstDetailCell.self, forCellWithReuseIdentifier: "FirstCellId")
+        collectionView.register(SecondDetailCell.self, forCellWithReuseIdentifier: "SecondCellId")
+        collectionView.register(ThirdDetailCell.self, forCellWithReuseIdentifier: "ThirdCellId")
+        collectionView.register(FourthDetailCell.self, forCellWithReuseIdentifier: "FourthCellId")
+        collectionView.register(FifthDetailCell.self, forCellWithReuseIdentifier: "FifthCellId")
     }
     
     private func setupNavigationBar(){
@@ -42,26 +63,24 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         navBar.heightAnchor.constraint(equalToConstant: 75).isActive = true
         
         // add blurEffect to navBar
-        let blur = UIBlurEffect(style: .dark)
-        let effectView = UIVisualEffectView(effect: blur)
-        navBar.addSubview(effectView)
-        effectView.translatesAutoresizingMaskIntoConstraints = false
-        effectView.widthAnchor.constraint(equalTo: navBar.widthAnchor).isActive = true
-        effectView.heightAnchor.constraint(equalTo: navBar.heightAnchor).isActive = true
+//        let blur = UIBlurEffect(style: .dark)
+//        let effectView = UIVisualEffectView(effect: blur)
+//        navBar.addSubview(effectView)
+//        effectView.translatesAutoresizingMaskIntoConstraints = false
+//        effectView.widthAnchor.constraint(equalTo: navBar.widthAnchor).isActive = true
+//        effectView.heightAnchor.constraint(equalTo: navBar.heightAnchor).isActive = true
         
-        // Add NavBar leftButton And IconView Button
+        // Add NavBar leftButton
         navBar.addSubview(navBarLeftButton)
         navBar.addConstraintsWithFormat(format: "H:|-20-[v0(30)]", views: navBarLeftButton)
         navBar.addConstraintsWithFormat(format: "V:[v0(30)]-8-|", views: navBarLeftButton)
         navBarLeftButton.addTarget(self, action: #selector(handleBackButtonTap), for: .touchUpInside)
 
-//
         // add navBar title
         navBar.addSubview(navBarTitle)
-        let center = view.frame.width / 2
-        navBar.addConstraintsWithFormat(format: "H:|-\(center - 40)-[v0]", views: navBarTitle)
+        navBar.addConstraintsWithFormat(format: "H:[v0]-1-[v1]|", views: navBarLeftButton, navBarTitle)
         navBar.addConstraintsWithFormat(format: "V:[v0]-12-|", views: navBarTitle)
-        
+        navBarTitle.text = movieName
         }
     
     @objc func handleBackButtonTap(){
@@ -69,40 +88,128 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 8
+        return 5
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return 0
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! HeaderView
+        header.headerImage.image = movieImage
         return header
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CellId", for: indexPath)
-        cell.backgroundColor = .white
+        
+        animatedCells.append(animationState.notAnimated)
+        
+        if indexPath.row == 0{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FirstCellId", for: indexPath) as! FirstDetailCell
+            cell.movieNameLabel.text = movieName
+            cell.imageView.image = movieImage
+            cell.movieRating = movieRating
+            cell.durationLabel.text = duration
+            return cell
+        }
+        
+        if indexPath.row == 1{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SecondCellId", for: indexPath) as! SecondDetailCell
+            cell.releaseDate.text = releaseDate
+            cell.genre.text = genre
+            return cell
+        }
+        
+        if indexPath.row == 2{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ThirdCellId", for: indexPath) as! ThirdDetailCell
+            cell.plotTextView.text = plot
+            return cell
+        }
+        
+        if indexPath.row == 3{
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
+            cell.cast = cast
+            return cell
+        }
+       
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
         return cell
+        
+    }
+    
+    override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+       
+        if animatedCells[indexPath.item] == .Animated{
+            return
+        }
+        
+        animatedCells[indexPath.item] = .Animated
+        
+        let origin = cell.frame.origin.x
+        
+        if indexPath.row == 0{
+            cell.frame.origin.y -= 40
+            cell.layer.zPosition = 2
+        }
+        
+        cell.frame.origin.x = origin - cell.frame.width
+        let initialDelay = 0.3
+        var delay = initialDelay + 0.2 * Double(indexPath.row)
+        
+        if indexPath.row > 2{
+           delay -= 1
+        }
+        
+            
+        UIView.animate(withDuration: 0.4, delay: delay, options: UIView.AnimationOptions.curveEaseOut, animations: {
+            cell.frame.origin.x = origin
+        }) { (_) in
+            
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.frame.width - 2 * padding, height: 60)
+        
+        let width: CGFloat = view.frame.width
+        let height: CGFloat =  60
+        
+        if indexPath.row == 0{
+            return CGSize(width: width, height: height * 2 + 30)
+        }
+        
+        if indexPath.row == 1{
+                return CGSize(width: width, height: 90)
+        }
+        
+        if indexPath.row == 3{
+            return CGSize(width: width, height: 200)
+        }
+        
+        if indexPath.row == 4{
+            return CGSize(width: width, height: 260)
+        }
+        
+        // rows 2
+        return CGSize(width: width, height: 170)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: view.frame.width, height: 350)
+        return CGSize(width: view.frame.width, height: 300)
     }
     
     
     // navBar view
     let navBar: UIView = {
         let bar = UIView()
-        bar.backgroundColor = UIColor(white: 0, alpha: 0.5)
+        bar.backgroundColor = UIColor(white: 0, alpha: 0.6)
         return bar
     }()
     
     // navBar left button
     let navBarLeftButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "Hamburger"), for: .normal)
+        button.setImage(UIImage(named: "Back"), for: .normal)
         return button
     }()
     
@@ -112,23 +219,8 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         title.text = "Featured"
         title.font = UIFont(name: "HelveticaNeue", size: 20)
         title.textColor = .white
+        title.textAlignment = .center
         return title
-    }()
-    
-    let profileImage: UIImageView = {
-        let image = UIImage(named: "stretchy_header")
-        let imageView = UIImageView(image: image)
-        imageView.layer.cornerRadius = 4
-        imageView.contentMode = .scaleAspectFit
-        imageView.clipsToBounds = true
-        return imageView
-    }()
-    
-    let coverImage: UIImageView = {
-        let image = UIImage(named: "stretchy_header")
-        let imageView = UIImageView(image: image)
-      //  imageView.contentMode = .scaleToFill
-        return imageView
     }()
     
 }

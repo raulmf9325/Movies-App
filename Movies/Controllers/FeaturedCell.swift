@@ -26,17 +26,60 @@ class BaseFeaturedCell: UICollectionViewCell{
         
     }
     
+    func downloadImage(){
+        
+        if let path = movie?.poster_path{
+            let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
+            
+            if let image = BaseFeaturedCell.cache.object(forKey: stringURL as AnyObject) as? UIImage{
+                imageView.image = image
+                return
+            }
+            
+            guard let url = URL(string: stringURL) else {return}
+            
+            URLSession.shared.dataTask(with: url) { (data, response, error) in
+                if error != nil{ (error)
+                    return
+                }
+                
+                if let data = data{
+                    if let image = UIImage(data: data){
+                        DispatchQueue.main.async(execute: {
+                            self.imageView.image = image
+                            BaseFeaturedCell.cache.setObject(image, forKey: stringURL as AnyObject)
+                           // print("downloading")
+                        })
+                    }
+                }
+                }.resume()
+        }
+        
+    }
+    
+    static var cache = NSCache<AnyObject, AnyObject>()
+    
+    var movie: Movie?{
+        didSet{
+            downloadImage()
+            nameLabel.text = movie?.title
+        }
+    }
+    
     let imageView: UIImageView = {
-        let image = UIImage(named: "maze")
+        let image = UIImage(named: "header")
         let imageView = UIImageView(image: image)
         imageView.layer.cornerRadius = 8
+        imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
     }()
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.attributedText = NSAttributedString(string: "Maze Runner: Death Cure", attributes: [NSAttributedString.Key.foregroundColor : UIColor.white, NSAttributedString.Key.font: UIFont(name: "HelveticaNeue", size: 12)])
+        label.text = "Maze Runner: The Death Cure"
+        label.textColor = .white
+        label.font = UIFont(name: "HelveticaNeue", size: 12)
         label.numberOfLines = 2
         label.textAlignment = .center
         return label

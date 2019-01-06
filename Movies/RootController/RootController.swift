@@ -16,6 +16,8 @@ class RootController: UIViewController{
     let menuExpandedOffSet: CGFloat = 130
     var navBar: NavigationBar!
     
+    var movies: [Movie]?
+    
     enum SlideOutState{
         case collapsed
         case expanded
@@ -25,19 +27,27 @@ class RootController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupViews()
-       // setupNavigationBar()
+        
+        Service.shared.fetchJSON(page: 1) { (movies) in
+            self.movies = movies
+            self.setupViews()
+        }
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle{
         return .lightContent
     }
     
+    
+    
     fileprivate func setupViews(){
         // instantiate featured and menu controllers
+        //print("setupViews")
         featured = Featured(collectionViewLayout: UICollectionViewFlowLayout())
         featuredNavigationController = UINavigationController(rootViewController: featured)
         featured.delegate = self
+        featured.movies = movies
+        
         menu = Menu()
         
         // insert featured and menu as views in container viewController

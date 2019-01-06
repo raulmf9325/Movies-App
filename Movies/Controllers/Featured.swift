@@ -15,7 +15,9 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     var delegate: FeaturedDelegate?
     
     // Number of Items In Section
-    var numberOfItemsInSection: Int!
+    var movies: [Movie]?
+    
+    var page = 1
     
     // Search Text Field
     let searchTextField: UITextField = {
@@ -40,7 +42,6 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     // view did load
     override func viewDidLoad() {
-        numberOfItemsInSection = 31
         setupCollectionView()
         setupNavigationBar()
     }
@@ -168,7 +169,10 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         }
     }
     
-    
+    // Flush cache
+    override func didReceiveMemoryWarning() {
+        BaseFeaturedCell.cache.removeAllObjects()
+    }
     
     // Number of Sections
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -177,20 +181,26 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     // Number Of Items in Section
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        guard let numberOfItemsInSection = movies?.count else {return 0}
         return numberOfItemsInSection
     }
     
     // Cell for Item at IndexPath
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        
+        var cell: BaseFeaturedCell
+        
         if layoutState == .icons{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "IconFeaturedCellId", for: indexPath) as! IconFeaturedCell
-            return cell
+             cell = collectionView.dequeueReusableCell(withReuseIdentifier: "IconFeaturedCellId", for: indexPath) as! IconFeaturedCell
         }
         else{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GridFeaturedCellId", for: indexPath) as! GridFeaturedCell
-            return cell
+             cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GridFeaturedCellId", for: indexPath) as! GridFeaturedCell
+           
         }
         
+        //cell.imageView.image = posters?[indexPath.item]
+        cell.movie = movies?[indexPath.item]
+        return cell
     }
     
     // Insets for Section 0
@@ -215,8 +225,65 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     // Present Movie Details
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
         let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
+        if let path = movies?[indexPath.item].poster_path{
+            let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
+            
+            if let image = BaseFeaturedCell.cache.object(forKey: stringURL as AnyObject) as? UIImage{
+                movieDetails.movieImage = image
+                movieDetails.movieName = movies?[indexPath.item].title
+                movieDetails.movieRating = movies?[indexPath.item].vote_average
+                movieDetails.releaseDate = movies?[indexPath.item].release_date
+                movieDetails.plot = movies?[indexPath.item].overview
+            }
+        }
+        
+        if let id = movies?[indexPath.item].id{
+            print(id)
+            Service.shared.fetchMovieDetails(movieId: id) { (details) in
+                if let runtime = details.runtime{
+                    let hours = runtime / 60
+                    let minutes = runtime % 60
+                    movieDetails.duration = "\(hours)h \(minutes)min"
+                    var genre = ""
+                    details.genres?.forEach({ (name) in
+                        if let genreName = name.name{
+                            genre.append(contentsOf: genreName)
+                            genre += " "
+                        }
+                    })
+                    movieDetails.genre = genre
+                    movieDetails.cast = details.credits?.cast
+                }
+            }
+        }
+        
+        if let genres = movies?[indexPath.item].genre_ids{
+            var tmp = [Int]()
+            for index in 0 ... 2{
+                if index + 1 <= genres.count{
+                    tmp.append(genres[index])
+                }
+            }
+           // print(tmp)
+        }
+        
         navigationController?.pushViewController(movieDetails, animated: true)
+    }
+    
+    override func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        guard let numberOfMovies = movies?.count else {return}
+        
+        if let lastCell = collectionView.cellForItem(at: IndexPath(item: numberOfMovies - 1, section: 0)){
+            page += 1
+            Service.shared.fetchJSON(page: page) { (movies) in
+                self.movies?.append(contentsOf: movies)
+                self.collectionView.reloadData()
+            }
+        }
+        
     }
     
 } // END: Featured Controller

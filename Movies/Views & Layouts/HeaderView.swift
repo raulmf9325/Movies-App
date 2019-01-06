@@ -24,13 +24,14 @@ class HeaderView: UICollectionViewCell {
     fileprivate func setupViews(){
         addSubview(headerImage)
         addConstraintsWithFormat(format: "H:|[v0]|", views: headerImage)
-        addConstraintsWithFormat(format: "V:|-\(navBarHeight)-[v0]|", views: headerImage)
+        addConstraintsWithFormat(format: "V:|[v0]|", views: headerImage)
     }
     
     let headerImage: UIImageView = {
-        let image = UIImage(named: "stretchy_header")
+        let image = UIImage(named: "header")
         let imageView = UIImageView(image: image)
         imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         return imageView
     }()
     
