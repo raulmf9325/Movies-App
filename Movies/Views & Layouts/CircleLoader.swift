@@ -18,19 +18,25 @@ class CircleLoader{
     
     let percentageLabel: UILabel = {
         let label = UILabel()
-        label.text = "0%"
+        label.text = ""
         label.font = UIFont.boldSystemFont(ofSize: 13)
         label.textAlignment = .center
         return label
     }()
     
-    init(containerView: UIView, centerPoint: CGPoint, value: Double){
+    init(containerView: UIView, animation: Bool, centerPoint: CGPoint, value: Double){
         self.view = containerView
         self.centerPoint = centerPoint
         self.value = value
         setupCircleLayers()
         setupPercentageLabel()
-        animateCircle()
+        
+        if animation == true{
+            animateCircle(duration: 2)
+        }
+        else{
+            animateCircle(duration: 0)
+        }
     }
     
     fileprivate func setupPercentageLabel(){
@@ -62,15 +68,18 @@ class CircleLoader{
         return layer
     }
     
-    fileprivate func animateCircle() {
+    fileprivate func animateCircle(duration: Double) {
         let animation = CABasicAnimation(keyPath: "strokeEnd")
         animation.toValue = value / 100
-        animation.duration = 2
+        animation.duration = duration
         animation.isRemovedOnCompletion = false
         
         animation.fillMode = .forwards
         shapeLayer.add(animation, forKey: "CircleLoader")
-        CountingLabel(label: percentageLabel, fromValue: 0, toValue: value, duration: 2)
+        
+        if duration != 0{
+            CountingLabel(label: percentageLabel, fromValue: 0, toValue: value, duration: duration)
+        }
     }
     
 }

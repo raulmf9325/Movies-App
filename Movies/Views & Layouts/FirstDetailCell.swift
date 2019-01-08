@@ -10,6 +10,7 @@ import UIKit
 
 class FirstDetailCell: UICollectionViewCell{
     
+    var animateCircle = true
     var movieRating: Double?{
         didSet{
             let circleRadius: CGFloat = 50
@@ -18,7 +19,7 @@ class FirstDetailCell: UICollectionViewCell{
             addConstraintsWithFormat(format: "V:[v0(\(circleRadius * 2))]|", views: circleFrame)
 
             
-            let circleBar = CircleLoader(containerView: self, centerPoint: CGPoint(x: 100 + circleRadius, y: 90 + circleRadius), value: movieRating! * 10)
+            let circleBar = CircleLoader(containerView: self, animation: animateCircle, centerPoint: CGPoint(x: 100 + circleRadius, y: 90 + circleRadius), value: movieRating! * 10)
         }
     }
     

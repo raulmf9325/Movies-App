@@ -12,8 +12,9 @@ class FourthDetailCell: UICollectionViewCell{
     
     var cast: [Cast]?{
         didSet{
+            guard let casting = cast else {return}
             var tmp = [Cast]()
-            for (index, profile) in cast!.enumerated(){
+            for (index, profile) in casting.enumerated(){
                 if profile.profile_path != nil{
                     tmp.append(profile)
                 }

@@ -93,6 +93,34 @@ class Service{
             }.resume()
     }
     
+    func fetchMoviesWithQuery(query: String, completion: @escaping ([Movie]) -> ()){
+        let jsonURLString = "https://api.themoviedb.org/3/search/movie?api_key=68ef98a4affa652b311088086fb922db&query=\(query)"
+        
+        guard let url = URL(string: jsonURLString) else {return}
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            guard let data = data else {return}
+            
+            do{
+                let website = try JSONDecoder().decode(Website.self, from: data)
+                
+                guard let movies = website.results else {return}
+                
+                /*  1- We use a completion handler because the lines of code that are passed as parameter: reload data and update categories
+                 should execute only when finished downloading from the internet
+                 2- We execute the completion handler asynchronously because updating the UI can only occur in the main thread
+                 */
+                DispatchQueue.main.async(execute: {
+                    completion(movies)
+                })
+                
+            } catch let jsonError{
+                print("Error while parsing JSON \n", jsonError)
+            }
+            }.resume()
+    }
+    
 }
 
 

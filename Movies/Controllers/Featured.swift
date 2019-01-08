@@ -17,6 +17,9 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     // Number of Items In Section
     var movies: [Movie]?
     
+    // for query of Movies
+    var queryMovies: [Movie]?
+    
     var page = 1
     
     // Search Text Field
@@ -44,6 +47,11 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     override func viewDidLoad() {
         setupCollectionView()
         setupNavigationBar()
+        setupTextField()
+    }
+    
+    private func setupTextField(){
+        searchTextField.addTarget(self, action: #selector(textDidChange), for: UIControl.Event.editingChanged)
     }
     
     private func setupNavigationBar(){
@@ -106,6 +114,11 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         
         // Retrieve List of Currently Visible Cells
         listOfVisibleCells = collectionView.indexPathsForVisibleItems.sorted()
+        
+        if listOfVisibleCells.count == 0{
+            return
+        }
+        
         // First Visible Cell
         guard var firstCell = collectionView.cellForItem(at: listOfVisibleCells[0]) else {return}
         
@@ -227,48 +240,32 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
-        if let path = movies?[indexPath.item].poster_path{
-            let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
-            
-            if let image = BaseFeaturedCell.cache.object(forKey: stringURL as AnyObject) as? UIImage{
-                movieDetails.movieImage = image
-                movieDetails.movieName = movies?[indexPath.item].title
-                movieDetails.movieRating = movies?[indexPath.item].vote_average
-                movieDetails.releaseDate = movies?[indexPath.item].release_date
-                movieDetails.plot = movies?[indexPath.item].overview
-            }
-        }
+      
+        movieDetails.movie = movies?[indexPath.item]
         
         if let id = movies?[indexPath.item].id{
-            print(id)
             Service.shared.fetchMovieDetails(movieId: id) { (details) in
-                if let runtime = details.runtime{
-                    let hours = runtime / 60
-                    let minutes = runtime % 60
-                    movieDetails.duration = "\(hours)h \(minutes)min"
-                    var genre = ""
-                    details.genres?.forEach({ (name) in
-                        if let genreName = name.name{
-                            genre.append(contentsOf: genreName)
-                            genre += " "
-                        }
-                    })
-                    movieDetails.genre = genre
-                    movieDetails.cast = details.credits?.cast
-                }
+                movieDetails.details = details
             }
         }
         
         if let genres = movies?[indexPath.item].genre_ids{
-            var tmp = [Int]()
+            var genreString = ""
             for index in 0 ... 2{
                 if index + 1 <= genres.count{
-                    tmp.append(genres[index])
+                    genreString.append(contentsOf: "\(genres[index]),")
                 }
             }
-           // print(tmp)
+            Service.shared.fetchMoviesWithGenres(genres: genreString) { (similarMovies) in
+                var similar = [Movie]()
+                for movie in similarMovies{
+                    if movie.title != self.movies?[indexPath.item].title{
+                        similar.append(movie)
+                    }
+                }
+                movieDetails.similarMovies = similar
+            }
         }
-        
         navigationController?.pushViewController(movieDetails, animated: true)
     }
     
@@ -283,10 +280,32 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
                 self.collectionView.reloadData()
             }
         }
-        
     }
     
 } // END: Featured Controller
+
+
+extension Featured{
+    
+    @objc func textDidChange(textField: UITextField){
+        print("here")
+        guard let text = textField.text else {return}
+        
+        Service.shared.fetchMoviesWithQuery(query: text) { (movies) in
+            self.movies = movies
+            self.collectionView.reloadData()
+            DispatchQueue.main.async {
+                self.handleMagnifierTap()
+            }
+            
+            self.searchTextField.becomeFirstResponder()
+            self.searchTextField.text = text
+        }
+        
+    }
+    
+    
+}
 
 
 // MARK: Featured Delegate

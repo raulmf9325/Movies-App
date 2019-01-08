@@ -18,11 +18,50 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     var plot: String?
     var genre: String?
     var cast: [Cast]?
-    var duration: String?{
+    var duration: String?
+    var details: Details?{
         didSet{
+            if let runtime = details?.runtime{
+                let hours = runtime / 60
+                let minutes = runtime % 60
+                duration = "\(hours)h \(minutes)min"
+            }
+            
+            var genre = ""
+            details?.genres?.forEach({ (name) in
+                if let genreName = name.name{
+                    genre.append(contentsOf: genreName)
+                    genre += " "
+                }
+            })
+            self.genre = genre
+            cast = details?.credits?.cast
+            
             collectionView.reloadData()
         }
     }
+    
+    var movie: Movie?{
+        didSet{
+            
+            if let path = movie?.poster_path{
+                let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
+                
+                if let image = BaseFeaturedCell.cache.object(forKey: stringURL as AnyObject) as? UIImage{
+                    movieImage = image
+                }
+            }
+            
+            movieName = movie?.title
+            movieRating = movie?.vote_average
+            releaseDate = movie?.release_date
+            plot = movie?.overview
+            
+            collectionView.reloadData()
+        }
+    }
+    
+    var similarMovies: [Movie]?
     
     let headerId = "headerId"
     
@@ -62,14 +101,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         navBar.widthAnchor.constraint(equalTo: view.widthAnchor).isActive = true
         navBar.heightAnchor.constraint(equalToConstant: 75).isActive = true
         
-        // add blurEffect to navBar
-//        let blur = UIBlurEffect(style: .dark)
-//        let effectView = UIVisualEffectView(effect: blur)
-//        navBar.addSubview(effectView)
-//        effectView.translatesAutoresizingMaskIntoConstraints = false
-//        effectView.widthAnchor.constraint(equalTo: navBar.widthAnchor).isActive = true
-//        effectView.heightAnchor.constraint(equalTo: navBar.heightAnchor).isActive = true
-        
         // Add NavBar leftButton
         navBar.addSubview(navBarLeftButton)
         navBar.addConstraintsWithFormat(format: "H:|-20-[v0(30)]", views: navBarLeftButton)
@@ -84,7 +115,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         }
     
     @objc func handleBackButtonTap(){
-        navigationController?.popViewController(animated: true)
+        navigationController?.popToRootViewController(animated: true)
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -111,6 +142,11 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             cell.imageView.image = movieImage
             cell.movieRating = movieRating
             cell.durationLabel.text = duration
+            
+            if animatedCells[indexPath.row] == .Animated{
+                cell.animateCircle = false
+            }
+            
             return cell
         }
         
@@ -133,8 +169,10 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             return cell
         }
        
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
-        return cell
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
+            cell.similarMovies = similarMovies
+            cell.navigationController = self.navigationController
+            return cell
         
     }
     
@@ -187,7 +225,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         }
         
         if indexPath.row == 4{
-            return CGSize(width: width, height: 260)
+            return CGSize(width: width, height: 270)
         }
         
         // rows 2
