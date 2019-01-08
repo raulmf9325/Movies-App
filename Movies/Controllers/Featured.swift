@@ -26,7 +26,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     let searchTextField: UITextField = {
         let textField = UITextField()
         let font =  UIFont(name: "HelveticaNeue", size: 12)
-        textField.attributedPlaceholder = NSAttributedString(string: "      movie, actor", attributes: [NSAttributedString.Key.foregroundColor : UIColor.black, NSAttributedString.Key.font: font ])
+        textField.attributedPlaceholder = NSAttributedString(string: "     movie", attributes: [NSAttributedString.Key.foregroundColor : UIColor.black, NSAttributedString.Key.font: font ])
         textField.font = font
         textField.layer.cornerRadius = 10
         textField.backgroundColor = .white
@@ -80,7 +80,11 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
             navBar.navBarIconView.image = UIImage(named: "iconView")
         }
         UIView.animate(withDuration: 0.2) {
-            self.collectionView.reloadData()
+            self.collectionView.performBatchUpdates({
+                let indexSet = IndexSet(integersIn: 0...0)
+                self.collectionView.reloadSections(indexSet)
+            }, completion: nil)
+            
             self.collectionView.layoutIfNeeded()
         }
     }
@@ -93,93 +97,66 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         delegate?.toggleMenu()
     }
     
-    // Search Text Field Container View
-    let searchBoxContainerView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .black
-        return view
-    }()
-    
     // Overlay View For Disabling User Intercation With Collection View
     let overlayView: UIView = {
         let view = UIView()
         return view
     }()
     
-    // List of Visible Cells
-    var listOfVisibleCells: [IndexPath]!
     
     // MARK: insert search box
     func handleMagnifierTap(){
         
-        // Retrieve List of Currently Visible Cells
-        listOfVisibleCells = collectionView.indexPathsForVisibleItems.sorted()
+        navBar.navBarLeftButton.removeFromSuperview()
+        navBar.navBarRightButton.removeFromSuperview()
+        navBar.navBarIconView.removeFromSuperview()
+        navBar.navBarTitle.removeFromSuperview()
         
-        if listOfVisibleCells.count == 0{
-            return
-        }
+        let magnifierImageView = UIImageView(image: UIImage(named: "Magnifier"))
+        navBar.navBar.addSubview(magnifierImageView)
         
-        // First Visible Cell
-        guard var firstCell = collectionView.cellForItem(at: listOfVisibleCells[0]) else {return}
+        navBar.navBar.addConstraintsWithFormat(format: "H:|-16-[v0(25)]", views: magnifierImageView)
+        navBar.navBar.addConstraintsWithFormat(format: "V:[v0(25)]-8-|", views: magnifierImageView)
         
-        // If First Visible Cell is Obscured By Nav Bar
-        var constant: CGFloat = -77
-        if layoutState == .grid{
-            constant = -165
-        }
-        if firstCell.frame.origin.y - collectionView.contentOffset.y < constant{
-            firstCell = collectionView.cellForItem(at: listOfVisibleCells[3])!
-        }
+        let cancelLabel = UILabel()
+        cancelLabel.text = "Cancel"
+        cancelLabel.textColor = .white
+        cancelLabel.font = UIFont.systemFont(ofSize: 13)
+        cancelLabel.isUserInteractionEnabled = true
+        cancelLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissSearch)))
         
-        // Container Frame Is Above First Cell
-        let frame = firstCell.frame
+        navBar.navBar.addSubview(searchTextField)
+        navBar.navBar.addSubview(cancelLabel)
+        navBar.navBar.addConstraintsWithFormat(format: "H:[v0]-16-[v1]-16-[v2]", views: magnifierImageView, searchTextField, cancelLabel)
+        navBar.navBar.addConstraintsWithFormat(format: "[v0(50)]-16-|", views: cancelLabel)
+        navBar.navBar.addConstraintsWithFormat(format: "V:[v0(30)]-8-|", views: searchTextField)
+        navBar.navBar.addConstraintsWithFormat(format: "V:[v0(30)]-8-|", views: cancelLabel)
         
-        let y: CGFloat = frame.origin.y - 100
-        let height: CGFloat = 100
-        let width: CGFloat = view.frame.width
-        let containerFrame = CGRect(x: 0, y: y, width: width, height: height)
-        
-        // Overlay Transparent View For Dismissal Of Search Box
-        let relativeX: CGFloat = frame.origin.x
-        let relativeY: CGFloat = frame.origin.y
-        let rect = CGRect(x: relativeX, y: relativeY, width: view.frame.width, height: view.frame.height)
-        overlayView.frame = rect
-        collectionView.addSubview(overlayView)
-        
-        // Add Search Box
-        searchBoxContainerView.frame = containerFrame
-        collectionView.addSubview(searchBoxContainerView)
-        searchBoxContainerView.addSubview(searchTextField)
-        searchBoxContainerView.addConstraintsWithFormat(format: "H:|-70-[v0]-70-|", views: searchTextField)
-        searchBoxContainerView.addConstraintsWithFormat(format: "V:[v0(35)]|", views: searchTextField)
-        // Scroll To Search Box
-        collectionView.scrollRectToVisible(containerFrame, animated: true)
-        
-        // Disable Collection View Scroll
-        collectionView.isScrollEnabled = false
-        // Disable Search Button While Search Box Is Active
-        navBar.navBarRightButton.isUserInteractionEnabled = false
-        // Add Gesture To Overlay View For Dismissal Of Search
-        overlayView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissSearch)))
-        // Bring Up Keyboard
+        searchTextField.addTarget(self, action: #selector(textDidChange(textField:)), for: UIControl.Event.editingChanged)
         searchTextField.becomeFirstResponder()
         
+        collectionView.addSubview(overlayView)
+        overlayView.frame = collectionView.frame
+        overlayView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard)))
     }
     
     // Dismiss Search
     @objc func dismissSearch(){
-        // Animate Scroll Back
-        UIView.animate(withDuration: 0.2, animations: {
-            self.searchBoxContainerView.frame.origin.y -= 40
-            self.searchTextField.resignFirstResponder()
-        }) { (_) in
-            // Remove Search Box and Overlay View
-            // Re-enable Scroll and Search Button
-            self.searchBoxContainerView.removeFromSuperview()
-            self.overlayView.removeFromSuperview()
-            self.collectionView.isScrollEnabled = true
-            self.navBar.navBarRightButton.isUserInteractionEnabled = true
+        Service.shared.fetchJSON(page: 1) { (movies) in
+            self.movies = movies
+            self.collectionView.performBatchUpdates({
+                let indexSet = IndexSet(integersIn: 0...0)
+                self.collectionView.reloadSections(indexSet)
+            }, completion: nil)
         }
+        searchTextField.text = ""
+        navBar.navBar.removeFromSuperview()
+        navBar = NavigationBar(delegate: self, viewController: self)
+    }
+    
+    @objc func dismissKeyboard(){
+        overlayView.removeFromSuperview()
+        searchTextField.resignFirstResponder()
     }
     
     // Flush cache
@@ -271,6 +248,8 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         
+        searchTextField.resignFirstResponder()
+        
         guard let numberOfMovies = movies?.count else {return}
         
         if let lastCell = collectionView.cellForItem(at: IndexPath(item: numberOfMovies - 1, section: 0)){
@@ -288,22 +267,23 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
 extension Featured{
     
     @objc func textDidChange(textField: UITextField){
-        print("here")
-        guard let text = textField.text else {return}
         
-        Service.shared.fetchMoviesWithQuery(query: text) { (movies) in
+        guard let text = textField.text else {return}
+        var queryText = text.replacingOccurrences(of: " ", with: "+")
+        
+        Service.shared.fetchMoviesWithQuery(query: queryText) { (movies) in
             self.movies = movies
-            self.collectionView.reloadData()
-            DispatchQueue.main.async {
-                self.handleMagnifierTap()
-            }
+            self.collectionView.performBatchUpdates({
+                let indexSet = IndexSet(integersIn: 0...0)
+                self.collectionView.reloadSections(indexSet)
+            }, completion: nil)
             
+            self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: UICollectionView.ScrollPosition.bottom, animated: false)
             self.searchTextField.becomeFirstResponder()
             self.searchTextField.text = text
         }
         
     }
-    
     
 }
 
@@ -311,4 +291,5 @@ extension Featured{
 // MARK: Featured Delegate
 protocol FeaturedDelegate {
     func toggleMenu()
+    func updateMoviesBasedOnMenu(movies: [Movie], title: String)
 }

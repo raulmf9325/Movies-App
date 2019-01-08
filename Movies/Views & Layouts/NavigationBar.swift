@@ -99,7 +99,7 @@ class NavigationBar{
     }()
     
     // navBar title
-    let navBarTitle: UILabel = {
+    var navBarTitle: UILabel = {
         let title = UILabel()
         title.text = "Featured"
         title.font = UIFont(name: "HelveticaNeue", size: 20)

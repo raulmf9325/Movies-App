@@ -11,8 +11,10 @@ import UIKit
 // MARK: Menu view controller
 class Menu: UITableViewController{
     
+    var delegate: FeaturedDelegate?
+    
     // Menu objects
-    let options: [String] = ["Most Popular", "Upcoming", "Profile"]
+    let options: [String] = ["Upcoming", "Featured", "Profile"]
     let imageNames: [String] = ["Star", "Calendar", "Profile"]
     
     // view did load
@@ -52,6 +54,25 @@ class Menu: UITableViewController{
         }()
         header?.backgroundView = backgroundView
         return header
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        // In Theaters
+        if indexPath.row == 0{
+            
+            Service.shared.fetchMoviesInTheaters { (movies) in
+                self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "Upcoming")
+            }
+        }
+        
+        // Featured
+        if indexPath.row == 1{
+            Service.shared.fetchJSON(page: 1) { (movies) in
+                self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "Featured")
+            }
+        }
+        
     }
 
 } // END: Menu controller

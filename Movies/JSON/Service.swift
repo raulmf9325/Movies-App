@@ -121,6 +121,35 @@ class Service{
             }.resume()
     }
     
+    func fetchMoviesInTheaters(completion: @escaping ([Movie]) -> ()){
+        
+        let date = DateFormatter()
+        date.dateFormat = "yyyy-MM-dd"
+        let dateString = date.string(from: Date())
+        
+        let jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&primary_release_date.gte=\(dateString)"
+        
+        guard let url = URL(string: jsonUrlString) else {return}
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            guard let data = data else {return}
+            
+            do{
+                let website = try JSONDecoder().decode(Website.self, from: data)
+                
+                guard let movies = website.results else {return}
+        
+                DispatchQueue.main.async(execute: {
+                    completion(movies)
+                })
+                
+            } catch let jsonError{
+                print("Error while parsing JSON \n", jsonError)
+            }
+            }.resume()
+    }
+    
 }
 
 
