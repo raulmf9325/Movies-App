@@ -135,31 +135,9 @@ class CastCell: UICollectionViewCell{
         
         if let path = profile?.profile_path{
             let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
-            
-            if let image = BaseFeaturedCell.cache.object(forKey: stringURL as AnyObject) as? UIImage{
-                actorImage.image = image
-                return
-            }
-            
-            guard let url = URL(string: stringURL) else {return}
-            
-            URLSession.shared.dataTask(with: url) { (data, response, error) in
-                if error != nil{ (error)
-                    return
-                }
-                
-                if let data = data{
-                    if let image = UIImage(data: data){
-                        DispatchQueue.main.async(execute: {
-                            self.actorImage.image = image
-                            BaseFeaturedCell.cache.setObject(image, forKey: stringURL as AnyObject)
-                            // print("downloading")
-                        })
-                    }
-                }
-                }.resume()
+            let actorImageURL = URL(string: stringURL)
+            actorImage.sd_setImage(with: actorImageURL) { (image, error, cache, url) in }
         }
-        
     }
     
     let actorImage: UIImageView = {

@@ -10,6 +10,7 @@ import UIKit
 
 class FirstDetailCell: UICollectionViewCell{
     
+    var posterURL: URL?
     var animateCircle = true
     var movieRating: Double?{
         didSet{
@@ -49,6 +50,10 @@ class FirstDetailCell: UICollectionViewCell{
         addConstraintsWithFormat(format: "V:[v0]-55-|", views: durationLabel)
         addConstraintsWithFormat(format: "V:[v0]-4-[v1]", views: movieNameLabel, durationLabel)
         
+        guard let url = posterURL else {return}
+        imageView.sd_setImage(with: url) { (image, error, cache, url) in
+            print("ERROR: \(error?.localizedDescription)")
+        }
     }
     
     

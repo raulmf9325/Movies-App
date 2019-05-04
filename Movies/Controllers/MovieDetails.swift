@@ -12,13 +12,14 @@ import UIKit
 class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     
     var movieName: String?
-    var movieImage: UIImage?
+    var moviePosterURL: URL?
     var movieRating: Double?
     var releaseDate: String?
     var plot: String?
     var genre: String?
     var cast: [Cast]?
     var duration: String?
+    
     var details: Details?{
         didSet{
             if let runtime = details?.runtime{
@@ -46,10 +47,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             
             if let path = movie?.poster_path{
                 let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
-                
-                if let image = BaseFeaturedCell.cache.object(forKey: stringURL as AnyObject) as? UIImage{
-                    movieImage = image
-                }
+                moviePosterURL = URL(string: stringURL)
             }
             
             movieName = movie?.title
@@ -129,7 +127,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! HeaderView
-        header.headerImage.image = movieImage
+        header.posterImageURL = moviePosterURL
         return header
     }
     
@@ -140,7 +138,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         if indexPath.row == 0{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FirstCellId", for: indexPath) as! FirstDetailCell
             cell.movieNameLabel.text = movieName
-            cell.imageView.image = movieImage
+            cell.posterURL = moviePosterURL
             cell.movieRating = movieRating
             cell.durationLabel.text = duration
             

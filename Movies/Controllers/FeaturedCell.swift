@@ -30,37 +30,16 @@ class BaseFeaturedCell: UICollectionViewCell{
     func downloadImage(){
         
         if let path = movie?.poster_path{
-            let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
-            
-//            if let image = BaseFeaturedCell.cache.object(forKey: stringURL as AnyObject) as? UIImage{
-//                imageView.image = image
-//                return
-//            }
-//
-//            guard let url = URL(string: stringURL) else {return}
-//
-//            URLSession.shared.dataTask(with: url) { (data, response, error) in
-//                if error != nil{ (error)
-//                    return
-//                }
-//
-//                if let data = data{
-//                    if let image = UIImage(data: data){
-//                        DispatchQueue.main.async(execute: {
-//                            self.imageView.image = image
-//                            BaseFeaturedCell.cache.setObject(image, forKey: stringURL as AnyObject)
-//                           // print("downloading")
-//                        })
-//                    }
-//                }
-//                }.resume()
-            
-            
+            let posterStringURL = "https://image.tmdb.org/t/p/w500/\(path)"
+            let posterURL = URL(string: posterStringURL)
+            imageView.sd_setImage(with: posterURL) { (image, error, cache, url) in
+                if let error = error{
+                    print("ERROR: \(error.localizedDescription)")
+                }
+            }
         }
         
     }
-    
-    static var cache = NSCache<AnyObject, AnyObject>()
     
     var movie: Movie?{
         didSet{

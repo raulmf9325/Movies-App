@@ -160,30 +160,8 @@ class SimilarMovieCell: UICollectionViewCell{
     func downloadImage(path: String){
         
             let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
-            
-            if let image = BaseFeaturedCell.cache.object(forKey: stringURL as AnyObject) as? UIImage{
-                similarMovieImage.image = image
-                return
-            }
-            
-            guard let url = URL(string: stringURL) else {return}
-            
-            URLSession.shared.dataTask(with: url) { (data, response, error) in
-                if error != nil{ (error)
-                    return
-                }
-                
-                if let data = data{
-                    if let image = UIImage(data: data){
-                        DispatchQueue.main.async(execute: {
-                            self.similarMovieImage.image = image
-                            BaseFeaturedCell.cache.setObject(image, forKey: stringURL as AnyObject)
-                            // print("downloading")
-                        })
-                    }
-                }
-                }.resume()
-        
+            let similarMovieImageURL = URL(string: stringURL)
+        similarMovieImage.sd_setImage(with: similarMovieImageURL) { (image, error, cache, url) in }
     }
     
     let similarMovieImage: UIImageView = {

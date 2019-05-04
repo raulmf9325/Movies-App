@@ -162,12 +162,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         overlayView.removeFromSuperview()
         searchTextField.resignFirstResponder()
     }
-    
-    // Flush cache
-    override func didReceiveMemoryWarning() {
-        BaseFeaturedCell.cache.removeAllObjects()
-    }
-    
+        
     // Number of Sections
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
