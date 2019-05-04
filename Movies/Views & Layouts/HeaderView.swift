@@ -11,7 +11,16 @@ import UIKit
 class HeaderView: UICollectionViewCell {
     
     let navBarHeight: CGFloat = 75
-    var posterImageURL: URL?
+    var posterImageURL: URL?{
+        didSet{
+            guard let url = posterImageURL else {return}
+            headerImage.sd_setImage(with: url) { (image, error, cache, url) in
+                if let error = error{
+                    print("ERROR: \(error.localizedDescription)")
+                }
+            }
+        }
+    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -26,12 +35,6 @@ class HeaderView: UICollectionViewCell {
         addSubview(headerImage)
         addConstraintsWithFormat(format: "H:|[v0]|", views: headerImage)
         addConstraintsWithFormat(format: "V:|[v0]|", views: headerImage)
-        guard let url = posterImageURL else {return}
-        headerImage.sd_setImage(with: url) { (image, error, cache, url) in
-            if let error = error{
-                print("ERROR: \(error.localizedDescription)")
-            }
-        }
     }
     
     let headerImage: UIImageView = {

@@ -10,16 +10,22 @@ import UIKit
 
 class FirstDetailCell: UICollectionViewCell{
     
-    var posterURL: URL?
+    var posterURL: URL?{
+        didSet{
+            guard let url = posterURL else {return}
+            imageView.sd_setImage(with: url) { (image, error, cache, url) in
+                print("ERROR: \(error?.localizedDescription)")
+            }
+        }
+    }
     var animateCircle = true
+    
     var movieRating: Double?{
         didSet{
             let circleRadius: CGFloat = 50
             addSubview(circleFrame)
             addConstraintsWithFormat(format: "H:|-16-[v0(\(circleRadius * 2))]", views: circleFrame)
-            addConstraintsWithFormat(format: "V:[v0(\(circleRadius * 2))]|", views: circleFrame)
-
-            
+            addConstraintsWithFormat(format: "V:[v0(\(circleRadius * 2))]|", views: circleFrame)            
             let circleBar = CircleLoader(containerView: self, animation: animateCircle, centerPoint: CGPoint(x: 100 + circleRadius, y: 90 + circleRadius), value: movieRating! * 10)
         }
     }
@@ -49,11 +55,6 @@ class FirstDetailCell: UICollectionViewCell{
         addConstraintsWithFormat(format: "V:[v0(120)]-30-|", views: imageView)
         addConstraintsWithFormat(format: "V:[v0]-55-|", views: durationLabel)
         addConstraintsWithFormat(format: "V:[v0]-4-[v1]", views: movieNameLabel, durationLabel)
-        
-        guard let url = posterURL else {return}
-        imageView.sd_setImage(with: url) { (image, error, cache, url) in
-            print("ERROR: \(error?.localizedDescription)")
-        }
     }
     
     
@@ -64,8 +65,8 @@ class FirstDetailCell: UICollectionViewCell{
     }()
     
     let imageView: UIImageView = {
-        let image = UIImage(named: "maze")
-        let imageView = UIImageView(image: image)
+        let imageView = UIImageView(image: nil)
+        imageView.backgroundColor = .darkGray
         imageView.layer.shadowColor = UIColor.black.cgColor
         imageView.layer.shadowOpacity = 1
         imageView.layer.shadowRadius = 8
