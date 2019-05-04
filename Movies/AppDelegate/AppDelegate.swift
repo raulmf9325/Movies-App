@@ -16,12 +16,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
+        // instance of root controller
+        let rootController = RootController()
+        
+        Service.shared.fetchJSON(page: 1) { (movies) in
+            rootController.movies = movies
+        }
+        
         // App Key Window
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         
-        // instance of root controller
-        let rootController = RootController()
+       
         window?.rootViewController = rootController
         
         // customizing navigation bar

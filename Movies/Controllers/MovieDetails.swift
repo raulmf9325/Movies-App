@@ -80,6 +80,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     
     fileprivate func setupCollectionView(){
         collectionView.backgroundColor = .white
+        collectionView.showsVerticalScrollIndicator = false
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "CellId")

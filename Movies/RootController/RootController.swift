@@ -16,7 +16,11 @@ class RootController: UIViewController{
     let menuExpandedOffSet: CGFloat = 130
     var navBar: NavigationBar!
     
-    var movies: [Movie]?
+    var movies: [Movie]?{
+        didSet{
+            featured.movies = movies
+        }
+    }
     
     enum SlideOutState{
         case collapsed
@@ -28,10 +32,7 @@ class RootController: UIViewController{
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        Service.shared.fetchJSON(page: 1) { (movies) in
-            self.movies = movies
-            self.setupViews()
-        }
+        setupViews()
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle{

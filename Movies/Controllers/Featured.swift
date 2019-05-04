@@ -15,7 +15,11 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     var delegate: FeaturedDelegate?
     
     // Number of Items In Section
-    var movies: [Movie]?
+    var movies: [Movie]?{
+        didSet{
+            self.collectionView.reloadData()
+        }
+    }
     
     // for query of Movies
     var queryMovies: [Movie]?

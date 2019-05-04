@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SDWebImage
 
 // MARK: Featured Controller Cell
 class BaseFeaturedCell: UICollectionViewCell{
@@ -31,28 +32,30 @@ class BaseFeaturedCell: UICollectionViewCell{
         if let path = movie?.poster_path{
             let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
             
-            if let image = BaseFeaturedCell.cache.object(forKey: stringURL as AnyObject) as? UIImage{
-                imageView.image = image
-                return
-            }
+//            if let image = BaseFeaturedCell.cache.object(forKey: stringURL as AnyObject) as? UIImage{
+//                imageView.image = image
+//                return
+//            }
+//
+//            guard let url = URL(string: stringURL) else {return}
+//
+//            URLSession.shared.dataTask(with: url) { (data, response, error) in
+//                if error != nil{ (error)
+//                    return
+//                }
+//
+//                if let data = data{
+//                    if let image = UIImage(data: data){
+//                        DispatchQueue.main.async(execute: {
+//                            self.imageView.image = image
+//                            BaseFeaturedCell.cache.setObject(image, forKey: stringURL as AnyObject)
+//                           // print("downloading")
+//                        })
+//                    }
+//                }
+//                }.resume()
             
-            guard let url = URL(string: stringURL) else {return}
             
-            URLSession.shared.dataTask(with: url) { (data, response, error) in
-                if error != nil{ (error)
-                    return
-                }
-                
-                if let data = data{
-                    if let image = UIImage(data: data){
-                        DispatchQueue.main.async(execute: {
-                            self.imageView.image = image
-                            BaseFeaturedCell.cache.setObject(image, forKey: stringURL as AnyObject)
-                           // print("downloading")
-                        })
-                    }
-                }
-                }.resume()
         }
         
     }
@@ -67,8 +70,8 @@ class BaseFeaturedCell: UICollectionViewCell{
     }
     
     let imageView: UIImageView = {
-        let image = UIImage(named: "header")
-        let imageView = UIImageView(image: image)
+        let imageView = UIImageView(image: nil)
+        imageView.backgroundColor = .darkGray
         imageView.layer.cornerRadius = 8
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
