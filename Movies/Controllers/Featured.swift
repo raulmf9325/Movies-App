@@ -93,6 +93,34 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         }
     }
     
+    // MARK: reload
+    func reload(){
+        if navBar.navBarTitle.text == "Featured"{
+            Service.shared.fetchFeatured(1) { (movies) in
+                self.reloadHelper(movies: movies)
+            }
+        }
+        else if navBar.navBarTitle.text == "Upcoming"{
+            Service.shared.fetchUpcoming { (movies) in
+                self.reloadHelper(movies: movies)
+            }
+        }
+    }
+    
+    private func reloadHelper(movies: [Movie]){
+        self.movies = movies
+        
+        self.collectionView.performBatchUpdates({
+            let indexSet = IndexSet(integersIn: 0...0)
+            self.collectionView.reloadSections(indexSet)
+        }, completion: nil)
+        
+        if self.movies?.count ?? 0 > 0{
+            self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: UICollectionView.ScrollPosition.bottom, animated: false)
+        }
+    }
+
+    
     // MARK: toggle menu
     func handleHamburgerTap(){
         if searchTextField.isFirstResponder{
@@ -145,16 +173,12 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     // Dismiss Search
     @objc func dismissSearch(){
-        Service.shared.fetchJSON(page: 1) { (movies) in
-            self.movies = movies
-            self.collectionView.performBatchUpdates({
-                let indexSet = IndexSet(integersIn: 0...0)
-                self.collectionView.reloadSections(indexSet)
-            }, completion: nil)
-        }
+        reload()
+        let title = navBar.navBarTitle.text!
         searchTextField.text = ""
         navBar.navBar.removeFromSuperview()
         navBar = NavigationBar(delegate: self, viewController: self)
+        navBar.navBarTitle.text = title
     }
     
     @objc func dismissKeyboard(){
@@ -252,7 +276,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         
         if let lastCell = collectionView.cellForItem(at: IndexPath(item: numberOfMovies - 1, section: 0)){
             page += 1
-            Service.shared.fetchJSON(page: page) { (movies) in
+            Service.shared.fetchFeatured(page) { (movies) in
                 self.movies?.append(contentsOf: movies)
                 self.collectionView.reloadData()
             }
@@ -268,6 +292,11 @@ extension Featured{
         
         guard let text = textField.text else {return}
         var queryText = text.replacingOccurrences(of: " ", with: "+")
+        
+        if queryText.count == 0{
+            reload()
+            return
+        }
         
         Service.shared.fetchMoviesWithQuery(query: queryText) { (movies) in
             self.movies = movies

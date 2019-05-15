@@ -19,7 +19,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // instance of root controller
         let rootController = RootController()
         
-        Service.shared.fetchJSON(page: 1) { (movies) in
+        Service.shared.fetchFeatured(1) { (movies) in
             rootController.movies = movies
         }
         

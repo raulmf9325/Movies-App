@@ -12,7 +12,7 @@ class Service{
     
     static let shared = Service()
     
-    func fetchJSON(page: Int, completion: @escaping ([Movie]) -> ()){
+    func fetchFeatured(_ page: Int, completion: @escaping ([Movie]) -> ()){
        
         let jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&lsort_by=popularity.desc&page=\(page)"
         guard let url = URL(string: jsonUrlString) else {return}
@@ -121,7 +121,7 @@ class Service{
             }.resume()
     }
     
-    func fetchMoviesInTheaters(completion: @escaping ([Movie]) -> ()){
+    func fetchUpcoming(completion: @escaping ([Movie]) -> ()){
         
         let date = DateFormatter()
         date.dateFormat = "yyyy-MM-dd"
