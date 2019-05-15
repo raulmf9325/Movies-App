@@ -58,9 +58,8 @@ class Menu: UITableViewController{
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         
-        // In Theaters
+        // Upcoming
         if indexPath.row == 0{
-            
             Service.shared.fetchMoviesInTheaters { (movies) in
                 self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "Upcoming")
             }

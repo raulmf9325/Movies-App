@@ -110,7 +110,6 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     // MARK: insert search box
     func handleMagnifierTap(){
-        
         navBar.navBarLeftButton.removeFromSuperview()
         navBar.navBarRightButton.removeFromSuperview()
         navBar.navBarIconView.removeFromSuperview()
@@ -277,15 +276,14 @@ extension Featured{
                 self.collectionView.reloadSections(indexSet)
             }, completion: nil)
             
-            self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: UICollectionView.ScrollPosition.bottom, animated: false)
+            if self.movies?.count ?? 0 > 0{
+                self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: UICollectionView.ScrollPosition.bottom, animated: false)
+            }
             self.searchTextField.becomeFirstResponder()
             self.searchTextField.text = text
         }
-        
     }
-    
 }
-
 
 // MARK: Featured Delegate
 protocol FeaturedDelegate {

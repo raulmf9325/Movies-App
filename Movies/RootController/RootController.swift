@@ -39,8 +39,6 @@ class RootController: UIViewController{
         return .lightContent
     }
     
-    
-    
     fileprivate func setupViews(){
         // instantiate featured and menu controllers
         //print("setupViews")
@@ -113,7 +111,6 @@ extension RootController: FeaturedDelegate{
     }
     
     func updateMoviesBasedOnMenu(movies: [Movie], title: String) {
-        
         featured.movies = movies
         featured.navBar.navBarTitle.text = title
         
@@ -126,8 +123,6 @@ extension RootController: FeaturedDelegate{
         
         toggleMenu()
     }
-    
-    
     
 } // End of Extensiom
 
@@ -142,7 +137,7 @@ extension RootController: NavigationProtocol{
     }
     
      func handleMagnifierTap(){
-        
+        featured.handleMagnifierTap()
     }
     
 }

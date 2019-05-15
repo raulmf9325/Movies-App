@@ -142,10 +142,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             cell.movieRating = movieRating
             cell.durationLabel.text = duration
             
-            if animatedCells[indexPath.row] == .Animated{
-                cell.animateCircle = false
-            }
-            
             return cell
         }
         

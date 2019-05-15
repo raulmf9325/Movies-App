@@ -18,15 +18,11 @@ class FirstDetailCell: UICollectionViewCell{
             }
         }
     }
-    var animateCircle = true
     
     var movieRating: Double?{
         didSet{
-            let circleRadius: CGFloat = 50
-            addSubview(circleFrame)
-            addConstraintsWithFormat(format: "H:|-16-[v0(\(circleRadius * 2))]", views: circleFrame)
-            addConstraintsWithFormat(format: "V:[v0(\(circleRadius * 2))]|", views: circleFrame)            
-            let circleBar = CircleLoader(containerView: self, animation: animateCircle, centerPoint: CGPoint(x: 100 + circleRadius, y: 90 + circleRadius), value: movieRating! * 10)
+            guard let rating = movieRating else {return}
+            ratingLabel.text = "rating: \(rating * 10)%"
         }
     }
     
@@ -40,7 +36,6 @@ class FirstDetailCell: UICollectionViewCell{
     }
     
     fileprivate func setupViews(){
-       
         // whiteView
         addSubview(whiteView)
         addConstraintsWithFormat(format: "H:|[v0]|", views: whiteView)
@@ -50,13 +45,15 @@ class FirstDetailCell: UICollectionViewCell{
         addSubview(imageView)
         addSubview(movieNameLabel)
         addSubview(durationLabel)
+        addSubview(ratingLabel)
         addConstraintsWithFormat(format: "H:|-16-[v0(80)]-20-[v1]|", views: imageView, movieNameLabel)
         addConstraintsWithFormat(format: "H:|-16-[v0(80)]-20-[v1]", views: imageView, durationLabel)
+        addConstraintsWithFormat(format: "H:|-16-[v0(80)]-20-[v1]", views: imageView, ratingLabel)
         addConstraintsWithFormat(format: "V:[v0(120)]-30-|", views: imageView)
         addConstraintsWithFormat(format: "V:[v0]-55-|", views: durationLabel)
         addConstraintsWithFormat(format: "V:[v0]-4-[v1]", views: movieNameLabel, durationLabel)
+        addConstraintsWithFormat(format: "V:[v0]-4-[v1]", views: durationLabel, ratingLabel)
     }
-    
     
     let whiteView: UIView = {
         let view = UIView()
@@ -91,8 +88,11 @@ class FirstDetailCell: UICollectionViewCell{
         return label
     }()
     
-    let circleFrame: UIView = {
-        let circle = UIView()
-        return circle
+    let ratingLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 11)
+        label.textColor = .darkGray
+        label.text = "rating: "
+        return label
     }()
 }
