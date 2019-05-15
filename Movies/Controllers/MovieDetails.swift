@@ -37,8 +37,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             })
             self.genre = genre
             cast = details?.credits?.cast
-            
-            collectionView.reloadData()
+          //  collectionView.reloadData()
         }
     }
     
@@ -54,7 +53,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             movieRating = movie?.vote_average
             releaseDate = movie?.release_date
             plot = movie?.overview
-            
             collectionView.reloadData()
         }
     }
@@ -164,7 +162,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             cell.posterURL = moviePosterURL
             cell.movieRating = movieRating
             cell.durationLabel.text = duration
-            
             return cell
         }
         
@@ -195,33 +192,34 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-       
+        
         if animatedCells[indexPath.item] == .Animated{
             return
         }
-        
+
         animatedCells[indexPath.item] = .Animated
-        
-        let origin = cell.frame.origin.x
-        
-        if indexPath.row == 0{
-            cell.frame.origin.y -= 40
-            cell.layer.zPosition = 2
-        }
-        
-        cell.frame.origin.x = origin - cell.frame.width
+        print(indexPath.item)
+        cell.frame.origin.y -= 40
+        cell.layer.zPosition = 2
+        cell.frame.origin.x =  -cell.frame.width
         let initialDelay = 0.3
-        var delay = initialDelay + 0.2 * Double(indexPath.row)
+        var delay = initialDelay + 0.2 * Double(indexPath.item)
         
-        if indexPath.row > 2{
-           delay -= 1
+ 
+        
+        if indexPath.item > 2{
+            delay -= 1
         }
-        
-            
+       
         UIView.animate(withDuration: 0.4, delay: delay, options: UIView.AnimationOptions.curveEaseOut, animations: {
-            cell.frame.origin.x = origin
+            cell.frame.origin.x = 0
         }) { (_) in
-            
+            if indexPath.item == 0{
+                let firstCell = cell as! FirstDetailCell
+                firstCell.durationLabel.text = self.duration
+                firstCell
+                print("Duration: \(self.duration)")
+            }
         }
     }
     

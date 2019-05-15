@@ -36,12 +36,6 @@ class FirstDetailCell: UICollectionViewCell{
     }
     
     fileprivate func setupViews(){
-        // whiteView
-        addSubview(whiteView)
-        addConstraintsWithFormat(format: "H:|[v0]|", views: whiteView)
-        let separation = frame.height / 2 + 20
-        addConstraintsWithFormat(format: "V:[v0(\(separation))]|", views: whiteView)
-        
         addSubview(imageView)
         addSubview(movieNameLabel)
         addSubview(durationLabel)
@@ -54,12 +48,6 @@ class FirstDetailCell: UICollectionViewCell{
         addConstraintsWithFormat(format: "V:[v0]-4-[v1]", views: movieNameLabel, durationLabel)
         addConstraintsWithFormat(format: "V:[v0]-4-[v1]", views: durationLabel, ratingLabel)
     }
-    
-    let whiteView: UIView = {
-        let view = UIView()
-        view.backgroundColor = .white
-        return view
-    }()
     
     let imageView: UIImageView = {
         let imageView = UIImageView(image: nil)
