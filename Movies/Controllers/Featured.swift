@@ -52,6 +52,20 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         setupCollectionView()
         setupNavigationBar()
         setupTextField()
+        setupScreenEdgeSwipe()
+    }
+    
+    private func setupScreenEdgeSwipe(){
+        let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
+        edgePan.edges = .left
+        
+        view.addGestureRecognizer(edgePan)
+    }
+    
+    @objc func screenEdgeSwiped(_ recognizer: UIScreenEdgePanGestureRecognizer) {
+        if recognizer.state == .recognized {
+            delegate?.handleSreenEdgeSwipe()
+        }
     }
     
     private func setupTextField(){
@@ -318,4 +332,5 @@ extension Featured{
 protocol FeaturedDelegate {
     func toggleMenu()
     func updateMoviesBasedOnMenu(movies: [Movie], title: String)
+    func handleSreenEdgeSwipe()
 }

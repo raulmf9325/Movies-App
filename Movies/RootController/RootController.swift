@@ -140,4 +140,7 @@ extension RootController: NavigationProtocol{
         featured.handleMagnifierTap()
     }
     
+    func handleSreenEdgeSwipe() {
+        featured.handleHamburgerTap()
+    }
 }

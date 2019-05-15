@@ -74,6 +74,20 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         super.viewDidLoad()
         setupCollectionView()
         setupNavigationBar()
+        setupScreenEdgeSwipe()
+    }
+    
+    private func setupScreenEdgeSwipe(){
+        let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
+        edgePan.edges = .left
+        
+        view.addGestureRecognizer(edgePan)
+    }
+    
+    @objc func screenEdgeSwiped(_ recognizer: UIScreenEdgePanGestureRecognizer) {
+        if recognizer.state == .recognized {
+            handleBackButtonTap()
+        }
     }
     
     fileprivate func setupCollectionView(){
