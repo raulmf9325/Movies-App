@@ -111,7 +111,16 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         navBar.addConstraintsWithFormat(format: "H:[v0]-1-[v1]|", views: navBarLeftButton, navBarTitle)
         navBar.addConstraintsWithFormat(format: "V:[v0]-12-|", views: navBarTitle)
         navBarTitle.text = movieName
+        if(movieName?.count ?? 0 > 38){
+            navBarTitle.font = UIFont.systemFont(ofSize: 14)
         }
+        else if(movieName?.count ?? 0 > 25){
+            navBarTitle.font = UIFont.systemFont(ofSize: 16)
+        }
+        else{
+            navBarTitle.font = UIFont.systemFont(ofSize: 20)
+        }
+    }
     
     @objc func handleBackButtonTap(){
         navigationController?.popToRootViewController(animated: true)
