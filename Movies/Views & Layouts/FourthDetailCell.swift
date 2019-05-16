@@ -37,7 +37,7 @@ class FourthDetailCell: UICollectionViewCell{
     fileprivate func setupViews(){
         addSubview(castLabel)
         addConstraintsWithFormat(format: "H:|-16-[v0]", views: castLabel)
-        addConstraintsWithFormat(format: "V:|[v0]", views: castLabel)
+        addConstraintsWithFormat(format: "V:|-10-[v0]", views: castLabel)
         
         addSubview(collection)
         addConstraintsWithFormat(format: "H:|[v0]|", views: collection)

@@ -42,7 +42,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     
     var movie: Movie?{
         didSet{
-            
             if let path = movie?.poster_path{
                 let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
                 moviePosterURL = URL(string: stringURL)
@@ -224,7 +223,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-        let width: CGFloat = view.frame.width
+        let width = view.frame.width
         let height: CGFloat =  60
         
         if indexPath.row == 0{
@@ -235,6 +234,16 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
                 return CGSize(width: width, height: 100)
         }
         
+        if indexPath.row == 2{
+            // row 2
+            let numberOfLines = (plot?.count ?? 0) / 60
+            let constant: CGFloat = 50.0
+            let plotHeight = CGFloat(numberOfLines * 20) + constant
+            
+            return CGSize(width: width, height: plotHeight)
+           // return CGSize(width: width, height: 170)
+        }
+        
         if indexPath.row == 3{
             return CGSize(width: width, height: 200)
         }
@@ -243,8 +252,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             return CGSize(width: width, height: 270)
         }
         
-        // rows 2
-        return CGSize(width: width, height: 170)
+        return CGSize(width: 0, height: 0)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
