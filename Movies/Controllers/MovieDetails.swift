@@ -232,7 +232,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         }
         
         if indexPath.row == 1{
-                return CGSize(width: width, height: 90)
+                return CGSize(width: width, height: 100)
         }
         
         if indexPath.row == 3{
