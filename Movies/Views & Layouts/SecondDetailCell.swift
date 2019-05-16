@@ -43,11 +43,11 @@ class SecondDetailCell: UICollectionViewCell{
         
         addSubview(playButtonView)
         addConstraintsWithFormat(format: "H:|-16-[v0(20)]", views: playButtonView)
-        addConstraintsWithFormat(format: "V:[v0]-5-[v1(20)]", views: genreLabel, playButtonView)
+        addConstraintsWithFormat(format: "V:[v0]-8-[v1(20)]", views: genreLabel, playButtonView)
         
         addSubview(watchTrailerLabel)
         addConstraintsWithFormat(format: "H:[v0]-8-[v1]", views: playButtonView, watchTrailerLabel)
-        addConstraintsWithFormat(format: "V:[v0]-5-[v1(20)]", views: genreLabel, watchTrailerLabel)
+        addConstraintsWithFormat(format: "V:[v0]-8-[v1(20)]", views: genreLabel, watchTrailerLabel)
     }
     
     let informationLabel: UILabel = {

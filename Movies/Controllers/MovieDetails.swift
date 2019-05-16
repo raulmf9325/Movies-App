@@ -204,8 +204,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         let initialDelay = 0.3
         var delay = initialDelay + 0.2 * Double(indexPath.item)
         
- 
-        
         if indexPath.item > 2{
             delay -= 1
         }
