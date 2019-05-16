@@ -37,7 +37,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             })
             self.genre = genre
             cast = details?.credits?.cast
-          //  collectionView.reloadData()
         }
     }
     
@@ -217,8 +216,10 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             if indexPath.item == 0{
                 let firstCell = cell as! FirstDetailCell
                 firstCell.durationLabel.text = self.duration
-                firstCell
-                print("Duration: \(self.duration)")
+            }
+            if indexPath.item == 1{
+                let secondCell = cell as! SecondDetailCell
+                secondCell.genre.text = self.genre
             }
         }
     }
