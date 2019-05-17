@@ -16,27 +16,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     var movieRating: Double?
     var releaseDate: String?
     var plot: String?
-    var cast: [Cast]?
-    
-//    var details: Details?{
-//        didSet{
-//            if let runtime = details?.runtime{
-//                let hours = runtime / 60
-//                let minutes = runtime % 60
-//                duration = "\(hours)h \(minutes)min"
-//            }
-//            
-//            var genre = ""
-//            details?.genres?.forEach({ (name) in
-//                if let genreName = name.name{
-//                    genre.append(contentsOf: genreName)
-//                    genre += " "
-//                }
-//            })
-//            self.genre = genre
-//            cast = details?.credits?.cast
-//        }
-//    }
     
     var movie: Movie?{
         didSet{
@@ -176,7 +155,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         
         if indexPath.row == 3{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
-            cell.cast = cast
+            cell.movieID = movie?.id
             return cell
         }
        
@@ -184,7 +163,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             cell.similarMovies = similarMovies
             cell.navigationController = self.navigationController
             return cell
-        
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -208,14 +186,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         UIView.animate(withDuration: 0.4, delay: delay, options: UIView.AnimationOptions.curveEaseOut, animations: {
             cell.frame.origin.x = 0
         }) { (_) in
-//            if indexPath.item == 0{
-//                let firstCell = cell as! FirstDetailCell
-//                firstCell.durationLabel.text = self.duration
-//            }
-//            if indexPath.item == 1{
-//                let secondCell = cell as! SecondDetailCell
-//                secondCell.genre.text = self.genre
-//            }
         }
     }
     
@@ -233,13 +203,10 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         }
         
         if indexPath.row == 2{
-            // row 2
-            let numberOfLines = (plot?.count ?? 0) / 60
+            let numberOfLines = CGFloat(CGFloat(plot?.count ?? 0) / 53.0)
             let constant: CGFloat = 50.0
-            let plotHeight = CGFloat(numberOfLines * 20) + constant
-            
+            let plotHeight: CGFloat = constant + CGFloat(numberOfLines * 15)
             return CGSize(width: width, height: plotHeight)
-           // return CGSize(width: width, height: 170)
         }
         
         if indexPath.row == 3{

@@ -13,13 +13,21 @@ class SecondDetailCell: UICollectionViewCell{
     var movieID: Int?{
         didSet{
             Service.shared.fetchMovieGenres(movieID: movieID!) { (genres) in
+                guard let genres = genres else {return}
                 var genre = ""
-                genres?.forEach({ (name) in
-                    if let genreName = name.name{
-                        genre.append(contentsOf: genreName)
-                        genre += " "
+                for i in 0 ..< genres.count{
+                    if i < 5{
+                        if let name = genres[i].name{
+                            genre.append(contentsOf: name)
+                            if i < genres.count - 1 && i < 4{
+                                genre += ", "
+                            }
+                            else{
+                                genre += " "
+                            }
+                        }
                     }
-            })
+                }
                 self.genre.text = genre
             }
         }
@@ -35,7 +43,6 @@ class SecondDetailCell: UICollectionViewCell{
     }
     
     fileprivate func setupViews(){
-        
         addSubview(informationLabel)
         addConstraintsWithFormat(format: "H:|-16-[v0]", views: informationLabel)
         addConstraintsWithFormat(format: "V:|[v0]", views: informationLabel)

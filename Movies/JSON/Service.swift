@@ -41,28 +41,28 @@ class Service{
             }.resume()
     }
     
-    // MARK: fecth movie details --> duration, genres and cast
-    func fetchMovieDetails(movieId: Int, completion: @escaping (Details) -> ()){
-        let jsonURLString = "https://api.themoviedb.org/3/movie/\(movieId)?api_key=68ef98a4affa652b311088086fb922db&append_to_response=credits"
-        guard let url = URL(string: jsonURLString) else {return}
-        
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            
-            guard let data = data else {return}
-            
-            do{
-                let details = try JSONDecoder().decode(Details.self, from: data)
-                
-                DispatchQueue.main.async(execute: {
-                    completion(details)
-                })
-                
-            } catch let jsonError{
-                print("Error while parsing JSON \n", jsonError)
-            }
-            }.resume()
-    }
-    
+//    // MARK: fecth movie details --> duration, genres and cast
+//    func fetchMovieDetails(movieId: Int, completion: @escaping (Details) -> ()){
+//        let jsonURLString = "https://api.themoviedb.org/3/movie/\(movieId)?api_key=68ef98a4affa652b311088086fb922db&append_to_response=credits"
+//        guard let url = URL(string: jsonURLString) else {return}
+//
+//        URLSession.shared.dataTask(with: url) { (data, response, error) in
+//
+//            guard let data = data else {return}
+//
+//            do{
+//                let details = try JSONDecoder().decode(Details.self, from: data)
+//
+//                DispatchQueue.main.async(execute: {
+//                    completion(details)
+//                })
+//
+//            } catch let jsonError{
+//                print("Error while parsing JSON \n", jsonError)
+//            }
+//            }.resume()
+//    }
+//
     // MARK: fetch movie duration
     func fetchMovieDuration(movieID: Int, completion: @escaping (Int?) -> ()){
         let jsonURLString = "https://api.themoviedb.org/3/movie/\(movieID)?api_key=68ef98a4affa652b311088086fb922db&append_to_response=credits"
@@ -107,6 +107,27 @@ class Service{
             }.resume()
     }
     
+    // MARK: fetch movie cast
+    func fetchMovieCast(movieID: Int, completion: @escaping ([Cast]?) -> ()){
+        let jsonURLString = "https://api.themoviedb.org/3/movie/\(movieID)?api_key=68ef98a4affa652b311088086fb922db&append_to_response=credits"
+        guard let url = URL(string: jsonURLString) else {return}
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            guard let data = data else {return}
+            
+            do{
+                let casting = try JSONDecoder().decode(cast.self, from: data)
+                
+                DispatchQueue.main.async(execute: {
+                    completion(casting.credits?.cast)
+                })
+                
+            } catch let jsonError{
+                print("Error while parsing JSON \n", jsonError)
+            }
+            }.resume()
+    }
     
     // MARK: fetch similar movies
     func fetchMoviesWithGenres(genres: String?, completion: @escaping ([Movie]) -> ()){
@@ -216,12 +237,6 @@ struct Movie: Decodable{
     var release_date: String?
 }
 
-struct Details: Decodable{
-    var genres: [genre]?
-    var runtime: Int?
-    var credits: Credit?
-}
-
 struct genres: Decodable{
     var genres: [genre]?
 }
@@ -231,7 +246,7 @@ struct runtime: Decodable{
 }
 
 struct cast: Decodable{
-    var credits: Credit?
+    var credits: Credits?
 }
 
 struct genre: Decodable{
@@ -239,7 +254,7 @@ struct genre: Decodable{
     var name: String?
 }
 
-struct Credit: Decodable{
+struct Credits: Decodable{
     var cast: [Cast]?
 }
 
