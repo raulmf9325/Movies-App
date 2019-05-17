@@ -28,9 +28,8 @@ class BaseFeaturedCell: UICollectionViewCell{
     }
     
     func downloadImage(){
-        
         if let path = movie?.poster_path{
-            let posterStringURL = "https://image.tmdb.org/t/p/w500/\(path)"
+            let posterStringURL = "https://image.tmdb.org/t/p/w200/\(path)"
             let posterURL = URL(string: posterStringURL)
             imageView.sd_setImage(with: posterURL) { (image, error, cache, url) in
                 if let error = error{
@@ -38,7 +37,6 @@ class BaseFeaturedCell: UICollectionViewCell{
                 }
             }
         }
-        
     }
     
     var movie: Movie?{

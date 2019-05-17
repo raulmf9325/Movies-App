@@ -221,7 +221,6 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         }
         else{
              cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GridFeaturedCellId", for: indexPath) as! GridFeaturedCell
-           
         }
         
         //cell.imageView.image = posters?[indexPath.item]
