@@ -16,29 +16,27 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     var movieRating: Double?
     var releaseDate: String?
     var plot: String?
-    var genre: String?
     var cast: [Cast]?
-    var duration: String?
     
-    var details: Details?{
-        didSet{
-            if let runtime = details?.runtime{
-                let hours = runtime / 60
-                let minutes = runtime % 60
-                duration = "\(hours)h \(minutes)min"
-            }
-            
-            var genre = ""
-            details?.genres?.forEach({ (name) in
-                if let genreName = name.name{
-                    genre.append(contentsOf: genreName)
-                    genre += " "
-                }
-            })
-            self.genre = genre
-            cast = details?.credits?.cast
-        }
-    }
+//    var details: Details?{
+//        didSet{
+//            if let runtime = details?.runtime{
+//                let hours = runtime / 60
+//                let minutes = runtime % 60
+//                duration = "\(hours)h \(minutes)min"
+//            }
+//            
+//            var genre = ""
+//            details?.genres?.forEach({ (name) in
+//                if let genreName = name.name{
+//                    genre.append(contentsOf: genreName)
+//                    genre += " "
+//                }
+//            })
+//            self.genre = genre
+//            cast = details?.credits?.cast
+//        }
+//    }
     
     var movie: Movie?{
         didSet{
@@ -156,17 +154,17 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         
         if indexPath.row == 0{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FirstCellId", for: indexPath) as! FirstDetailCell
+            cell.movieID = movie?.id
             cell.movieNameLabel.text = movieName
             cell.posterURL = moviePosterURL
             cell.movieRating = movieRating
-            cell.durationLabel.text = duration
             return cell
         }
         
         if indexPath.row == 1{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SecondCellId", for: indexPath) as! SecondDetailCell
             cell.releaseDate.text = releaseDate
-            cell.genre.text = genre
+            cell.movieID = movie?.id
             return cell
         }
         
@@ -210,14 +208,14 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         UIView.animate(withDuration: 0.4, delay: delay, options: UIView.AnimationOptions.curveEaseOut, animations: {
             cell.frame.origin.x = 0
         }) { (_) in
-            if indexPath.item == 0{
-                let firstCell = cell as! FirstDetailCell
-                firstCell.durationLabel.text = self.duration
-            }
-            if indexPath.item == 1{
-                let secondCell = cell as! SecondDetailCell
-                secondCell.genre.text = self.genre
-            }
+//            if indexPath.item == 0{
+//                let firstCell = cell as! FirstDetailCell
+//                firstCell.durationLabel.text = self.duration
+//            }
+//            if indexPath.item == 1{
+//                let secondCell = cell as! SecondDetailCell
+//                secondCell.genre.text = self.genre
+//            }
         }
     }
     

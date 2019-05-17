@@ -10,6 +10,21 @@ import UIKit
 
 class SecondDetailCell: UICollectionViewCell{
     
+    var movieID: Int?{
+        didSet{
+            Service.shared.fetchMovieGenres(movieID: movieID!) { (genres) in
+                var genre = ""
+                genres?.forEach({ (name) in
+                    if let genreName = name.name{
+                        genre.append(contentsOf: genreName)
+                        genre += " "
+                    }
+            })
+                self.genre.text = genre
+            }
+        }
+    }
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()

@@ -256,12 +256,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
       
         movieDetails.movie = movies?[indexPath.item]
         
-        if let id = movies?[indexPath.item].id{
-            Service.shared.fetchMovieDetails(movieId: id) { (details) in
-                movieDetails.details = details
-            }
-        }
-        
+        // find similar movies
         if let genres = movies?[indexPath.item].genre_ids{
             var genreString = ""
             for index in 0 ... 2{

@@ -10,6 +10,18 @@ import UIKit
 
 class FirstDetailCell: UICollectionViewCell{
     
+    var movieID: Int?{
+        didSet{
+            Service.shared.fetchMovieDuration(movieID: movieID!) { (duration) in
+                if let runtime = duration{
+                    let hours = runtime / 60
+                    let minutes = runtime % 60
+                    self.durationLabel.text = "\(hours)h \(minutes)min"
+                }
+            }
+        }
+    }
+    
     var posterURL: URL?{
         didSet{
             guard let url = posterURL else {return}
@@ -70,7 +82,7 @@ class FirstDetailCell: UICollectionViewCell{
     
     let durationLabel: UILabel = {
         let label = UILabel()
-        label.text = "2h 43min"
+        label.text = ""
         label.font = UIFont.systemFont(ofSize: 11)
         label.textColor = .darkGray
         return label

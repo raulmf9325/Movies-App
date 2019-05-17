@@ -88,12 +88,6 @@ extension FifthDetailCell: UICollectionViewDelegateFlowLayout, UICollectionViewD
         
         movieDetails.movie = similarMovies?[indexPath.item]
         
-        if let id = similarMovies?[indexPath.item].id{
-            Service.shared.fetchMovieDetails(movieId: id) { (details) in
-                movieDetails.details = details
-            }
-        }
-        
         if let genres = similarMovies?[indexPath.item].genre_ids{
             var genreString = ""
             for index in 0 ... 2{
@@ -111,7 +105,6 @@ extension FifthDetailCell: UICollectionViewDelegateFlowLayout, UICollectionViewD
                 movieDetails.similarMovies = similar
             }
         }
-        
         
         navigationController?.pushViewController(movieDetails, animated: true)
     }
