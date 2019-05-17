@@ -41,28 +41,6 @@ class Service{
             }.resume()
     }
     
-//    // MARK: fecth movie details --> duration, genres and cast
-//    func fetchMovieDetails(movieId: Int, completion: @escaping (Details) -> ()){
-//        let jsonURLString = "https://api.themoviedb.org/3/movie/\(movieId)?api_key=68ef98a4affa652b311088086fb922db&append_to_response=credits"
-//        guard let url = URL(string: jsonURLString) else {return}
-//
-//        URLSession.shared.dataTask(with: url) { (data, response, error) in
-//
-//            guard let data = data else {return}
-//
-//            do{
-//                let details = try JSONDecoder().decode(Details.self, from: data)
-//
-//                DispatchQueue.main.async(execute: {
-//                    completion(details)
-//                })
-//
-//            } catch let jsonError{
-//                print("Error while parsing JSON \n", jsonError)
-//            }
-//            }.resume()
-//    }
-//
     // MARK: fetch movie duration
     func fetchMovieDuration(movieID: Int, completion: @escaping (Int?) -> ()){
         let jsonURLString = "https://api.themoviedb.org/3/movie/\(movieID)?api_key=68ef98a4affa652b311088086fb922db&append_to_response=credits"

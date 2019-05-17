@@ -172,14 +172,15 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         }
 
         animatedCells[indexPath.item] = .Animated
-        print(indexPath.item)
+        
         cell.frame.origin.y -= 40
         cell.layer.zPosition = 2
         cell.frame.origin.x =  -cell.frame.width
         let initialDelay = 0.3
         var delay = initialDelay + 0.2 * Double(indexPath.item)
         
-        if indexPath.item > 2{
+        let numberOfLines = CGFloat(CGFloat(plot?.count ?? 0) / 53.0)
+        if (numberOfLines >= 3 && indexPath.item > 2) || indexPath.item == 4 {
             delay -= 1
         }
        
@@ -207,8 +208,8 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
                 return .zero
             }
             let numberOfLines = CGFloat(CGFloat(plot?.count ?? 0) / 53.0)
-            let constant: CGFloat = 50.0
-            let plotHeight: CGFloat = constant + CGFloat(numberOfLines * 15)
+            let constant: CGFloat = 70.0
+            let plotHeight: CGFloat = constant + CGFloat(numberOfLines * 14)
             return CGSize(width: width, height: plotHeight)
         }
         

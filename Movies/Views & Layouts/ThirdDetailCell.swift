@@ -21,12 +21,12 @@ class ThirdDetailCell: UICollectionViewCell{
     
     fileprivate func setupViews(){
         addSubview(plotLabel)
-        addConstraintsWithFormat(format: "H:|-16-[v0]", views: plotLabel)
-        addConstraintsWithFormat(format: "V:|-10-[v0]", views: plotLabel)
+        addConstraintsWithFormat(format: "H:|-16-[v0(40)]", views: plotLabel)
+        addConstraintsWithFormat(format: "V:|-10-[v0(25)]", views: plotLabel)
         
         addSubview(plotTextView)
         addConstraintsWithFormat(format: "H:|-12-[v0]-16-|", views: plotTextView)
-        addConstraintsWithFormat(format: "V:[v0]-6-[v1]|", views: plotLabel, plotTextView)
+        addConstraintsWithFormat(format: "V:[v0]-1-[v1]|", views: plotLabel, plotTextView)
         
     }
     
