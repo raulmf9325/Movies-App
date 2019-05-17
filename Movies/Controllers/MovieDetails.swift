@@ -203,6 +203,9 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         }
         
         if indexPath.row == 2{
+            if plot?.count == 0{
+                return .zero
+            }
             let numberOfLines = CGFloat(CGFloat(plot?.count ?? 0) / 53.0)
             let constant: CGFloat = 50.0
             let plotHeight: CGFloat = constant + CGFloat(numberOfLines * 15)

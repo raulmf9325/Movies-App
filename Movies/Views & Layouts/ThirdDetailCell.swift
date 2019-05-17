@@ -43,6 +43,7 @@ class ThirdDetailCell: UICollectionViewCell{
         text.textColor = .lightGray
         text.font = UIFont.systemFont(ofSize: 12)
         text.isEditable = false
+        text.isScrollEnabled = false
         return text
     }()
     

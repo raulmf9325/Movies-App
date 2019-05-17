@@ -16,7 +16,7 @@ class FourthDetailCell: UICollectionViewCell{
                 guard let casting = movieCast else {return}
                 var tmp = [Cast]()
                 for (index, profile) in casting.enumerated(){
-                    if profile.profile_path != nil{
+                    if profile.name != nil{
                         tmp.append(profile)
                     }
                 }
@@ -108,6 +108,9 @@ class CastCell: UICollectionViewCell{
             if profile?.profile_path != nil{
                 downloadImage()
             }
+            else{
+                actorImage.image = UIImage(named: "Actor")
+            }
         }
     }
     
@@ -145,7 +148,7 @@ class CastCell: UICollectionViewCell{
     }
     
     let actorImage: UIImageView = {
-        let image = UIImage(named: "dylan")
+        let image = UIImage(named: "Actor")
         let imageView = UIImageView(image: image)
         imageView.layer.cornerRadius = 100 / 2
         imageView.layer.masksToBounds = true
