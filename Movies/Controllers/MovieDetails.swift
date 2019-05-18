@@ -144,6 +144,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SecondCellId", for: indexPath) as! SecondDetailCell
             cell.releaseDate.text = releaseDate
             cell.movieID = movie?.id
+            cell.trailerDelegate = self
             return cell
         }
         
@@ -253,4 +254,17 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         return title
     }()
     
+}
+
+extension MovieDetails: WatchTrailerDelegate{
+    func playTrailer(url: URL) {
+//        let player = AVPlayer(url: url)
+//        let vc = AVPlayerViewController()
+//        vc.player = player
+//
+//        navigationController?.pushViewController(vc, animated: true)
+//        vc.player?.play()
+        let videoController = VideoViewController(url: url)
+        navigationController?.pushViewController(videoController, animated: true)
+    }
 }

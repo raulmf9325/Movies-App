@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3E30BA97228F668B00EEB9BA /* VideoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E30BA96228F668B00EEB9BA /* VideoViewController.swift */; };
 		3E31AC1D21DEA50300F9B6A5 /* ThirdDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E31AC1C21DEA50300F9B6A5 /* ThirdDetailCell.swift */; };
 		3E31AC1F21DEAC1000F9B6A5 /* FourthDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E31AC1E21DEAC1000F9B6A5 /* FourthDetailCell.swift */; };
 		3E31AC2121DEBBEE00F9B6A5 /* FifthDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E31AC2021DEBBEE00F9B6A5 /* FifthDetailCell.swift */; };
@@ -33,6 +34,7 @@
 
 /* Begin PBXFileReference section */
 		09DE84B658F959D801BF9E65 /* Pods-Movies.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Movies.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Movies/Pods-Movies.debug.xcconfig"; sourceTree = "<group>"; };
+		3E30BA96228F668B00EEB9BA /* VideoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoViewController.swift; sourceTree = "<group>"; };
 		3E31AC1C21DEA50300F9B6A5 /* ThirdDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThirdDetailCell.swift; sourceTree = "<group>"; };
 		3E31AC1E21DEAC1000F9B6A5 /* FourthDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FourthDetailCell.swift; sourceTree = "<group>"; };
 		3E31AC2021DEBBEE00F9B6A5 /* FifthDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FifthDetailCell.swift; sourceTree = "<group>"; };
@@ -170,6 +172,7 @@
 				3EA7B6F121BE1BF5004FE49A /* Featured.swift */,
 				3ED180BE21C0D1C7009F6F23 /* FeaturedCell.swift */,
 				3EC093EF21C37A67003B7F2F /* MovieDetails.swift */,
+				3E30BA96228F668B00EEB9BA /* VideoViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -317,6 +320,7 @@
 				3EC093F021C37A67003B7F2F /* MovieDetails.swift in Sources */,
 				3EC2034421DC5E5500AD22C2 /* SecondDetailCell.swift in Sources */,
 				3EED9D6021D2BF600093BF78 /* StretchyHeaderLayout.swift in Sources */,
+				3E30BA97228F668B00EEB9BA /* VideoViewController.swift in Sources */,
 				3EC2033E21DAFCC700AD22C2 /* FirstDetailCell.swift in Sources */,
 				3E31AC1D21DEA50300F9B6A5 /* ThirdDetailCell.swift in Sources */,
 				3EA7B6F221BE1BF5004FE49A /* Featured.swift in Sources */,

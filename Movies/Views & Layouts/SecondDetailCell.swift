@@ -8,10 +8,17 @@
 
 import UIKit
 
+protocol WatchTrailerDelegate{
+    func playTrailer(url: URL)
+}
+
 class SecondDetailCell: UICollectionViewCell{
+    
+    var trailerDelegate: WatchTrailerDelegate?
     
     var movieID: Int?{
         didSet{
+            // fetch genres
             Service.shared.fetchMovieGenres(movieID: movieID!) { (genres) in
                 guard let genres = genres else {return}
                 var genre = ""
@@ -30,8 +37,17 @@ class SecondDetailCell: UICollectionViewCell{
                 }
                 self.genre.text = genre
             }
+            // fetch trailer URL
+            Service.shared.fetchMovieTrailerURL(movieID: movieID!) { (trailers) in
+                guard let trailers = trailers else {return}
+                    if let key = trailers[0].key{
+                        self.videoURL = URL(string: "https://www.youtube.com/embed/\(key)")
+                    }
+            }
         }
     }
+    
+    var videoURL: URL?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -70,6 +86,15 @@ class SecondDetailCell: UICollectionViewCell{
         addSubview(watchTrailerLabel)
         addConstraintsWithFormat(format: "H:[v0]-8-[v1]", views: playButtonView, watchTrailerLabel)
         addConstraintsWithFormat(format: "V:[v0]-8-[v1(20)]", views: genreLabel, watchTrailerLabel)
+        
+        [playButtonView, watchTrailerLabel].forEach { (view) in
+            view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(playTrailer)))
+        }
+    }
+    
+    @objc private func playTrailer(){
+        guard let url = videoURL else {return}
+        trailerDelegate?.playTrailer(url: url)
     }
     
     let informationLabel: UILabel = {
@@ -123,6 +148,7 @@ class SecondDetailCell: UICollectionViewCell{
         label.text = "Watch Trailer"
         label.textColor = UIColor(red: 0.71, green: 0.02, blue: 0.02, alpha: 1)
         label.font = UIFont.systemFont(ofSize: 13)
+        label.isUserInteractionEnabled = true
         return label
     }()
 }

@@ -199,6 +199,27 @@ class Service{
             }.resume()
     }
     
+    // MARK: fetch movie trailer youtube ID
+    func fetchMovieTrailerURL(movieID: Int, completion: @escaping ([trailers]?) -> ()){
+        let jsonURLString = "https://api.themoviedb.org/3/movie/\(movieID)/videos?api_key=68ef98a4affa652b311088086fb922db"
+        guard let url = URL(string: jsonURLString) else {return}
+        
+        URLSession.shared.dataTask(with: url) { (data, response, error) in
+            
+            guard let data = data else {return}
+            
+            do{
+                let trailers = try JSONDecoder().decode(trailersResults.self, from: data)
+                
+                DispatchQueue.main.async(execute: {
+                    completion(trailers.results)
+                })
+                
+            } catch let jsonError{
+                print("Error while parsing JSON \n", jsonError)
+            }
+            }.resume()
+    }
 }
 
 struct Website: Decodable{
@@ -240,4 +261,12 @@ struct Cast: Decodable{
     var character: String?
     var name: String?
     var profile_path: String?
+}
+
+struct trailersResults: Decodable{
+    var results: [trailers]?
+}
+
+struct trailers: Decodable{
+    var key: String?
 }
