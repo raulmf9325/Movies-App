@@ -115,7 +115,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
             }
         }
         else if navBar.navBarTitle.text == "Upcoming"{
-            Service.shared.fetchUpcoming { (movies) in
+            Service.shared.fetchUpcoming(page: 1) { (movies) in
                 self.reloadHelper(movies: movies)
             }
         }
@@ -284,7 +284,32 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         
         if let lastCell = collectionView.cellForItem(at: IndexPath(item: numberOfMovies - 1, section: 0)){
             page += 1
+            updateCollectionWithNewContent()
+        }
+    }
+    
+    private func updateCollectionWithNewContent(){
+        let title = navBar.navBarTitle.text
+        
+        // Featured
+        if title == "Featured"{
             Service.shared.fetchFeatured(page) { (movies) in
+                self.movies?.append(contentsOf: movies)
+                self.collectionView.reloadData()
+            }
+        }
+        
+        // In Theaters
+        if title == "In Theaters"{
+            Service.shared.fetchInTheaters(page: page) { (movies) in
+                self.movies?.append(contentsOf: movies)
+                self.collectionView.reloadData()
+            }
+        }
+        
+        // Upcoming
+        if title == "Upcoming"{
+            Service.shared.fetchUpcoming(page: page) { (movies) in
                 self.movies?.append(contentsOf: movies)
                 self.collectionView.reloadData()
             }

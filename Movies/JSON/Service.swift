@@ -170,13 +170,13 @@ class Service{
     }
     
     // MARK: fetch upcoming movies
-    func fetchUpcoming(completion: @escaping ([Movie]) -> ()){
+    func fetchUpcoming(page: Int, completion: @escaping ([Movie]) -> ()){
         
         let date = DateFormatter()
         date.dateFormat = "yyyy-MM-dd"
         let dateString = date.string(from: Date())
         
-        let jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&primary_release_date.gte=\(dateString)"
+        let jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&primary_release_date.gte=\(dateString)&lsort_by=popularity.desc&page=\(page)"
         
         guard let url = URL(string: jsonUrlString) else {return}
         
@@ -197,6 +197,45 @@ class Service{
                 print("Error while parsing JSON \n", jsonError)
             }
             }.resume()
+    }
+    
+    // MARK: In theaters
+    func fetchInTheaters(page: Int, completion: @escaping ([Movie]) -> ()){
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        
+        let date = Date()
+        let currentDate = dateFormatter.string(from: date)
+       
+        if let lastMonthDate = Calendar.current.date(byAdding: .month, value: -1, to: date){
+            let calendar = Calendar.current
+            let year = calendar.component(.year, from: lastMonthDate)
+            let month = calendar.component(.month, from: lastMonthDate)
+            let day = calendar.component(.day, from: lastMonthDate)
+            
+            let jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&primary_release_date.gte=\(year)-\(month)-\(day)&primary_release_date.lte=\(currentDate)&page=\(page)"
+           
+            guard let url = URL(string: jsonUrlString) else {return}
+            
+            URLSession.shared.dataTask(with: url) { (data, response, error) in
+                
+                guard let data = data else {return}
+                
+                do{
+                    let website = try JSONDecoder().decode(Website.self, from: data)
+                    
+                    guard let movies = website.results else {return}
+                    
+                    DispatchQueue.main.async(execute: {
+                        completion(movies)
+                    })
+                    
+                } catch let jsonError{
+                    print("Error while parsing JSON \n", jsonError)
+                }
+                }.resume()
+        }
+        
     }
     
     // MARK: fetch movie trailer youtube ID

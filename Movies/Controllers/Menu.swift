@@ -14,8 +14,8 @@ class Menu: UITableViewController{
     var delegate: FeaturedDelegate?
     
     // Menu objects
-    let options: [String] = ["Upcoming", "Featured", "Profile"]
-    let imageNames: [String] = ["Star", "Calendar", "Profile"]
+    let options: [String] = ["Featured", "In Theaters", "Upcoming"]
+    let imageNames: [String] = ["Star", "Calendar", "Calendar"]
     
     // view did load
     override func viewDidLoad() {
@@ -57,17 +57,24 @@ class Menu: UITableViewController{
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        // Upcoming
+        // Featured
         if indexPath.row == 0{
-            Service.shared.fetchUpcoming { (movies) in
-                self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "Upcoming")
+            Service.shared.fetchFeatured(1) { (movies) in
+                self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "Featured")
             }
         }
         
-        // Featured
-        if indexPath.row == 1{
-            Service.shared.fetchFeatured(1) { (movies) in
-                self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "Featured")
+        // In theaters
+        if indexPath.item == 1{
+            Service.shared.fetchInTheaters(page: 1) { (movies) in
+                self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "In Theaters")
+            }
+        }
+        
+        // Upcoming
+        if indexPath.row == 2{
+            Service.shared.fetchUpcoming(page: 1) { (movies) in
+                self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "Upcoming")
             }
         }
     }
