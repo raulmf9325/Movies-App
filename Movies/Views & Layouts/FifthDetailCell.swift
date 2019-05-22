@@ -118,6 +118,9 @@ class SimilarMovieCell: UICollectionViewCell{
             if let path = movie?.poster_path{
                 downloadImage(path: path)
             }
+            else{
+                self.similarMovieImage.image = nil
+            }
             
             similarMovieName.text = movie?.title
             
@@ -157,19 +160,19 @@ class SimilarMovieCell: UICollectionViewCell{
     }
     
     let similarMovieImage: UIImageView = {
-        let image = UIImage(named: "insurgent")
-        let imageView = UIImageView(image: image)
+        let imageView = UIImageView(image: nil)
         imageView.layer.shadowColor = UIColor.black.cgColor
         imageView.layer.shadowOpacity = 1
         imageView.layer.shadowRadius = 4
         imageView.layer.shadowOffset = CGSize(width: 0, height: 4)
         imageView.contentMode = .scaleAspectFill
+        imageView.backgroundColor = .lightGray
         return imageView
     }()
     
     let similarMovieName: UILabel = {
         let label = UILabel()
-        label.text = "Insurgent"
+        label.text = ""
         label.font = UIFont.systemFont(ofSize: 12)
         label.textAlignment = .center
         label.numberOfLines = 3
@@ -178,7 +181,7 @@ class SimilarMovieCell: UICollectionViewCell{
     
     let similarMovieRating: UILabel = {
         let label = UILabel()
-        label.text = "42%"
+        label.text = ""
         label.font = UIFont.systemFont(ofSize: 12)
         label.textColor = .lightGray
         label.textAlignment = .center

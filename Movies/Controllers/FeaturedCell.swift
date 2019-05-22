@@ -37,6 +37,9 @@ class BaseFeaturedCell: UICollectionViewCell{
                 }
             }
         }
+        else{
+            self.imageView.image = nil
+        }
     }
     
     var movie: Movie?{
@@ -48,7 +51,7 @@ class BaseFeaturedCell: UICollectionViewCell{
     
     let imageView: UIImageView = {
         let imageView = UIImageView(image: nil)
-        imageView.backgroundColor = .darkGray
+        imageView.backgroundColor = .lightGray
         imageView.layer.cornerRadius = 8
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
@@ -57,7 +60,7 @@ class BaseFeaturedCell: UICollectionViewCell{
     
     let nameLabel: UILabel = {
         let label = UILabel()
-        label.text = "Maze Runner: The Death Cure"
+        label.text = ""
         label.textColor = .white
         label.font = UIFont(name: "HelveticaNeue", size: 12)
         label.numberOfLines = 2

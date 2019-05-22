@@ -63,7 +63,7 @@ class FirstDetailCell: UICollectionViewCell{
     
     let imageView: UIImageView = {
         let imageView = UIImageView(image: nil)
-        imageView.backgroundColor = .darkGray
+        imageView.backgroundColor = .lightGray
         imageView.layer.shadowColor = UIColor.black.cgColor
         imageView.layer.shadowOpacity = 1
         imageView.layer.shadowRadius = 8
@@ -74,7 +74,7 @@ class FirstDetailCell: UICollectionViewCell{
     
     let movieNameLabel: UILabel = {
         let label = UILabel()
-        label.text = "The Maze Runner: Death Cure"
+        label.text = ""
         label.font = UIFont.systemFont(ofSize: 15)
         label.numberOfLines = 2
         return label

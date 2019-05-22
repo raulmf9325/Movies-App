@@ -21,6 +21,7 @@ class SecondDetailCell: UICollectionViewCell{
             // fetch genres
             Service.shared.fetchMovieGenres(movieID: movieID!) { (genres) in
                 guard let genres = genres else {return}
+                if genres.count > 0{
                 var genre = ""
                 for i in 0 ..< genres.count{
                     if i < 5{
@@ -35,14 +36,28 @@ class SecondDetailCell: UICollectionViewCell{
                         }
                     }
                 }
-                self.genre.text = genre
+                    self.genre.text = genre
+                }
+                else{
+                    self.genreLabel.text = ""
+                    self.genre.text = ""
+                }
             }
+            
             // fetch trailer URL
             Service.shared.fetchMovieTrailerURL(movieID: movieID!) { (trailers) in
                 guard let trailers = trailers else {return}
+                if trailers.count > 0{
                     if let key = trailers[0].key{
                         self.videoURL = URL(string: "https://www.youtube.com/embed/\(key)")
                     }
+                    else{
+                        self.handleNoTrailer()
+                    }
+                }
+                else{
+                    self.handleNoTrailer()
+                }
             }
         }
     }
@@ -56,6 +71,11 @@ class SecondDetailCell: UICollectionViewCell{
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    fileprivate func handleNoTrailer(){
+        playButtonView.removeFromSuperview()
+        watchTrailerLabel.removeFromSuperview()
     }
     
     fileprivate func setupViews(){
@@ -114,7 +134,7 @@ class SecondDetailCell: UICollectionViewCell{
     
     var releaseDate: UILabel = {
         let label = UILabel()
-        label.text = "January 26, 2018"
+        label.text = ""
         label.textColor = .lightGray
         label.font = UIFont.systemFont(ofSize: 12)
         return label
@@ -130,7 +150,7 @@ class SecondDetailCell: UICollectionViewCell{
     
     let genre: UILabel = {
         let label = UILabel()
-        label.text = "Young adult‎, ‎dystopia‎, ‎science fiction"
+        label.text = ""
         label.textColor = .lightGray
         label.font = UIFont.systemFont(ofSize: 12)
         return label

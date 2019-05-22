@@ -114,7 +114,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 5
+        return (plot == nil || plot?.count == 0) ? 4 : 5
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -149,21 +149,35 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         }
         
         if indexPath.row == 2{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ThirdCellId", for: indexPath) as! ThirdDetailCell
-            cell.plotTextView.text = plot
-            return cell
+            if plot == nil || plot?.count == 0{
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
+                cell.movieID = movie?.id
+                return cell
+            }else{
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ThirdCellId", for: indexPath) as! ThirdDetailCell
+                cell.plotTextView.text = plot
+                return cell
+            }
         }
         
         if indexPath.row == 3{
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
-            cell.movieID = movie?.id
-            return cell
+            if plot == nil || plot?.count == 0{
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
+                cell.similarMovies = similarMovies
+                cell.navigationController = self.navigationController
+                return cell
+            }
+            else{
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
+                cell.movieID = movie?.id
+                return cell
+            }
         }
        
-            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
-            cell.similarMovies = similarMovies
-            cell.navigationController = self.navigationController
-            return cell
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
+        cell.similarMovies = similarMovies
+        cell.navigationController = self.navigationController
+        return cell
     }
     
     override func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
@@ -181,7 +195,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         var delay = initialDelay + 0.2 * Double(indexPath.item)
         
         let numberOfLines = CGFloat(CGFloat(plot?.count ?? 0) / 53.0)
-        if (numberOfLines >= 3 && indexPath.item > 2) || indexPath.item == 4 {
+        if (numberOfLines >= 3.5 && indexPath.item > 2) || (indexPath.item == 4 || (indexPath.item == 3 && (plot == nil || plot?.count == 0))) {
             delay -= 1
         }
        
@@ -205,17 +219,24 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         }
         
         if indexPath.row == 2{
-            if plot?.count == 0{
-                return .zero
+            if plot == nil || plot?.count == 0{
+                return CGSize(width: width, height: 200)
             }
-            let numberOfLines = CGFloat(CGFloat(plot?.count ?? 0) / 53.0)
-            let constant: CGFloat = 70.0
-            let plotHeight: CGFloat = constant + CGFloat(numberOfLines * 14)
-            return CGSize(width: width, height: plotHeight)
+            else{
+                let numberOfLines = CGFloat(CGFloat(plot?.count ?? 0) / 53.0)
+                let constant: CGFloat = 70.0
+                let plotHeight: CGFloat = constant + CGFloat(numberOfLines * 14)
+                return CGSize(width: width, height: plotHeight)
+            }
         }
         
         if indexPath.row == 3{
-            return CGSize(width: width, height: 200)
+            if plot == nil || plot?.count == 0{
+                return CGSize(width: width, height: 270)
+            }
+            else{
+                return CGSize(width: width, height: 200)
+            }
         }
         
         if indexPath.row == 4{
@@ -258,12 +279,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
 
 extension MovieDetails: WatchTrailerDelegate{
     func playTrailer(url: URL) {
-//        let player = AVPlayer(url: url)
-//        let vc = AVPlayerViewController()
-//        vc.player = player
-//
-//        navigationController?.pushViewController(vc, animated: true)
-//        vc.player?.play()
         let videoController = VideoViewController(url: url)
         navigationController?.pushViewController(videoController, animated: true)
     }

@@ -39,7 +39,7 @@ class HeaderView: UICollectionViewCell {
     
     let headerImage: UIImageView = {
         let imageView = UIImageView(image: nil)
-        imageView.backgroundColor = .darkGray
+        imageView.backgroundColor = .lightGray
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
