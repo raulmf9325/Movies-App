@@ -170,7 +170,7 @@ class SimilarMovieCell: UICollectionViewCell{
     }
     
     func downloadImage(path: String){
-        let stringURL = "https://image.tmdb.org/t/p/w200/\(path)"
+        let stringURL = "https://image.tmdb.org/t/p/w300/\(path)"
         let similarMovieImageURL = URL(string: stringURL)
         similarMovieImage.sd_setImage(with: similarMovieImageURL) { (image, error, cache, url) in }
     }

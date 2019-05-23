@@ -98,6 +98,9 @@ class Service{
                 let casting = try JSONDecoder().decode(cast.self, from: data)
                 
                 DispatchQueue.main.async(execute: {
+                    if casting.credits == nil || casting.credits?.cast == nil || casting.credits?.cast?.count == 0{
+                        print("Null cast for --> \(movieID)")
+                    }
                     completion(casting.credits?.cast)
                 })
                 
@@ -285,6 +288,7 @@ struct runtime: Decodable{
 
 struct cast: Decodable{
     var credits: Credits?
+     var title: String?
 }
 
 struct genre: Decodable{
