@@ -251,28 +251,13 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     // Present Movie Details
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        let cell = collectionView.cellForItem(at: indexPath) as! BaseFeaturedCell
+        
         let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
-      
+        
+        movieDetails.cast = cell.cast
         movieDetails.movie = movies?[indexPath.item]
         
-        // find similar movies
-        if let genres = movies?[indexPath.item].genre_ids{
-            var genreString = ""
-            for index in 0 ... 2{
-                if index + 1 <= genres.count{
-                    genreString.append(contentsOf: "\(genres[index]),")
-                }
-            }
-            Service.shared.fetchMoviesWithGenres(genres: genreString) { (similarMovies) in
-                var similar = [Movie]()
-                for movie in similarMovies{
-                    if movie.title != self.movies?[indexPath.item].title{
-                        similar.append(movie)
-                    }
-                }
-                movieDetails.similarMovies = similar
-            }
-        }
         navigationController?.pushViewController(movieDetails, animated: true)
     }
     

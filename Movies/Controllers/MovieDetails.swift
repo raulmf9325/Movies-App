@@ -16,6 +16,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     var movieRating: Double?
     var releaseDate: String?
     var plot: String?
+    var cast: [Cast]?
     
     var movie: Movie?{
         didSet{
@@ -31,8 +32,6 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             collectionView.reloadData()
         }
     }
-    
-    var similarMovies: [Movie]?
     
     let headerId = "headerId"
     
@@ -114,7 +113,17 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return (plot == nil || plot?.count == 0) ? 4 : 5
+        var numberOfItems = 3
+        
+        if plot != nil && ((plot?.count ?? 0) > 0){
+            numberOfItems += 1
+        }
+        
+        if cast != nil{
+            numberOfItems += 1
+        }
+        
+        return numberOfItems
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -150,9 +159,17 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         
         if indexPath.row == 2{
             if plot == nil || plot?.count == 0{
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
-                cell.movieID = movie?.id
-                return cell
+                if cast != nil{
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
+                    cell.movieID = movie?.id
+                    return cell
+                }
+                else{
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
+                    cell.movie = movie
+                    cell.navigationController = self.navigationController
+                    return cell
+                }
             }else{
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ThirdCellId", for: indexPath) as! ThirdDetailCell
                 cell.plotTextView.text = plot
@@ -163,19 +180,27 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         if indexPath.row == 3{
             if plot == nil || plot?.count == 0{
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
-                cell.similarMovies = similarMovies
+                cell.movie = movie
                 cell.navigationController = self.navigationController
                 return cell
             }
             else{
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
-                cell.movieID = movie?.id
-                return cell
+                if cast != nil{
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
+                    cell.movieID = movie?.id
+                    return cell
+                }
+                else{
+                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
+                    cell.movie = movie
+                    cell.navigationController = self.navigationController
+                    return cell
+                }
             }
         }
        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
-        cell.similarMovies = similarMovies
+        cell.movie = movie
         cell.navigationController = self.navigationController
         return cell
     }
@@ -220,7 +245,12 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         
         if indexPath.row == 2{
             if plot == nil || plot?.count == 0{
-                return CGSize(width: width, height: 200)
+                if cast != nil{
+                    return CGSize(width: width, height: 200)
+                }
+                else{
+                    return CGSize(width: width, height: 270)
+                }
             }
             else{
                 let numberOfLines = CGFloat(CGFloat(plot?.count ?? 0) / 53.0)
@@ -235,7 +265,12 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
                 return CGSize(width: width, height: 270)
             }
             else{
-                return CGSize(width: width, height: 200)
+                if cast != nil{
+                    return CGSize(width: width, height: 200)
+                }
+                else{
+                    return CGSize(width: width, height: 270)
+                }
             }
         }
         

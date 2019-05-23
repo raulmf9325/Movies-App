@@ -27,7 +27,7 @@ class BaseFeaturedCell: UICollectionViewCell{
         
     }
     
-    func downloadImage(){
+    private func downloadImage(){
         if let path = movie?.poster_path{
             let posterStringURL = "https://image.tmdb.org/t/p/w200/\(path)"
             let posterURL = URL(string: posterStringURL)
@@ -42,12 +42,28 @@ class BaseFeaturedCell: UICollectionViewCell{
         }
     }
     
+    private func downloadCast(){
+        if let id = movie?.id{
+            Service.shared.fetchMovieCast(movieID: id) { (cast) in
+                if cast == nil || cast?.count == 0{
+                    self.cast = nil
+                }
+                else{
+                    self.cast = cast
+                }
+            }
+        }
+    }
+    
     var movie: Movie?{
         didSet{
             downloadImage()
             nameLabel.text = movie?.title
+            downloadCast()
         }
     }
+    
+    var cast: [Cast]?
     
     let imageView: UIImageView = {
         let imageView = UIImageView(image: nil)

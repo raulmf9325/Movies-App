@@ -10,7 +10,34 @@ import UIKit
 
 class FifthDetailCell: UICollectionViewCell{
     
-    var similarMovies: [Movie]?
+    var movie: Movie?{
+        didSet{
+            // find similar movies
+            if let genres = movie?.genre_ids{
+                var genreString = ""
+                for index in 0 ... 2{
+                    if index + 1 <= genres.count{
+                        genreString.append(contentsOf: "\(genres[index]),")
+                    }
+                }
+                
+                Service.shared.fetchMoviesWithGenres(genres: genreString) { (similarMovies) in
+                    var similar = [Movie]()
+                    for similarMovie in similarMovies{
+                        if similarMovie.title != self.movie?.title{
+                            similar.append(similarMovie)
+                        }
+                    }
+                
+                    self.similar = similar
+                    self.collection.reloadData()
+                }
+            }
+        }
+    }
+    
+    var similar: [Movie]?
+    
     var navigationController: UINavigationController?
     
     override init(frame: CGRect) {
@@ -58,13 +85,13 @@ class FifthDetailCell: UICollectionViewCell{
 extension FifthDetailCell: UICollectionViewDelegateFlowLayout, UICollectionViewDelegate, UICollectionViewDataSource{
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let numberOfItems = similarMovies?.count else {return 0}
+        guard let numberOfItems = similar?.count else {return 19}
         return numberOfItems
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "CellId", for: indexPath) as! SimilarMovieCell
-        cell.movie = similarMovies?[indexPath.item]
+        cell.movie = similar?[indexPath.item]
         return cell
     }
     
@@ -84,27 +111,12 @@ extension FifthDetailCell: UICollectionViewDelegateFlowLayout, UICollectionViewD
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
+        let cell = collectionView.cellForItem(at: indexPath) as! SimilarMovieCell
+        
         let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
         
-        movieDetails.movie = similarMovies?[indexPath.item]
-        
-        if let genres = similarMovies?[indexPath.item].genre_ids{
-            var genreString = ""
-            for index in 0 ... 2{
-                if index + 1 <= genres.count{
-                    genreString.append(contentsOf: "\(genres[index]),")
-                }
-            }
-            Service.shared.fetchMoviesWithGenres(genres: genreString) { (recommendedMovies) in
-                var similar = [Movie]()
-                for movie in recommendedMovies{
-                    if movie.title != self.similarMovies?[indexPath.item].title{
-                        similar.append(movie)
-                    }
-                }
-                movieDetails.similarMovies = similar
-            }
-        }
+        movieDetails.cast = cell.cast
+        movieDetails.movie = similar?[indexPath.item]
         
         navigationController?.pushViewController(movieDetails, animated: true)
     }
@@ -127,8 +139,12 @@ class SimilarMovieCell: UICollectionViewCell{
             if let rating = movie?.vote_average{
                 similarMovieRating.text = "\(rating * 10)%"
             }
+            
+            downloadCast()
         }
     }
+    
+    var cast: [Cast]?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -157,6 +173,19 @@ class SimilarMovieCell: UICollectionViewCell{
         let stringURL = "https://image.tmdb.org/t/p/w200/\(path)"
         let similarMovieImageURL = URL(string: stringURL)
         similarMovieImage.sd_setImage(with: similarMovieImageURL) { (image, error, cache, url) in }
+    }
+    
+    private func downloadCast(){
+        if let id = movie?.id{
+            Service.shared.fetchMovieCast(movieID: id) { (cast) in
+                if cast == nil || cast?.count == 0{
+                    self.cast = nil
+                }
+                else{
+                    self.cast = cast
+                }
+            }
+        }
     }
     
     let similarMovieImage: UIImageView = {
