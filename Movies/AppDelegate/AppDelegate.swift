@@ -18,7 +18,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // instance of root controller
         let rootController = RootController()
-        
+
         Service.shared.fetchFeatured(1) { (movies) in
             let pageOne = movies
             Service.shared.fetchFeatured(2, completion: { (movies) in
@@ -31,7 +31,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         
-       
+        
         window?.rootViewController = rootController
         
         // customizing navigation bar
