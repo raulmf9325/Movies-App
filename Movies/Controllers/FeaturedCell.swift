@@ -38,7 +38,7 @@ class BaseFeaturedCell: UICollectionViewCell{
             }
         }
         else{
-            self.imageView.image = nil
+            self.imageView.image = UIImage(named: "picture_rect_white")
         }
     }
     
@@ -66,7 +66,7 @@ class BaseFeaturedCell: UICollectionViewCell{
     var cast: [Cast]?
     
     let imageView: UIImageView = {
-        let imageView = UIImageView(image: nil)
+        let imageView = UIImageView(image: UIImage(named: "picture_rect_white"))
         imageView.backgroundColor = .lightGray
         imageView.layer.cornerRadius = 8
         imageView.contentMode = .scaleAspectFill

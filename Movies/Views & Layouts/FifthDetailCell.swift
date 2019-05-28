@@ -131,7 +131,7 @@ class SimilarMovieCell: UICollectionViewCell{
                 downloadImage(path: path)
             }
             else{
-                self.similarMovieImage.image = nil
+                self.similarMovieImage.image = UIImage(named: "picture_rect")
             }
             
             similarMovieName.text = movie?.title
@@ -189,13 +189,12 @@ class SimilarMovieCell: UICollectionViewCell{
     }
     
     let similarMovieImage: UIImageView = {
-        let imageView = UIImageView(image: nil)
+        let imageView = UIImageView(image: UIImage(named: "picture_rect"))
         imageView.layer.shadowColor = UIColor.black.cgColor
         imageView.layer.shadowOpacity = 1
         imageView.layer.shadowRadius = 4
         imageView.layer.shadowOffset = CGSize(width: 0, height: 4)
         imageView.contentMode = .scaleAspectFill
-        imageView.backgroundColor = .lightGray
         return imageView
     }()
     

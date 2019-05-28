@@ -62,13 +62,12 @@ class FirstDetailCell: UICollectionViewCell{
     }
     
     let imageView: UIImageView = {
-        let imageView = UIImageView(image: nil)
-        imageView.backgroundColor = .lightGray
+        let imageView = UIImageView(image: UIImage(named: "picture_rect_white"))
         imageView.layer.shadowColor = UIColor.black.cgColor
         imageView.layer.shadowOpacity = 1
         imageView.layer.shadowRadius = 8
         imageView.layer.shadowOffset = CGSize(width: 0, height: 4)
-        imageView.contentMode = .scaleAspectFill
+        imageView.contentMode = .scaleAspectFit
         return imageView
     }()
     

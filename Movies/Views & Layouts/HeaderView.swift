@@ -38,8 +38,7 @@ class HeaderView: UICollectionViewCell {
     }
     
     let headerImage: UIImageView = {
-        let imageView = UIImageView(image: nil)
-        imageView.backgroundColor = .lightGray
+        let imageView = UIImageView(image: UIImage(named: "picture"))
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         return imageView
