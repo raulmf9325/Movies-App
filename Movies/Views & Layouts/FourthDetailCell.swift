@@ -124,7 +124,6 @@ class CastCell: UICollectionViewCell{
     }
     
     fileprivate func setupViews(){
-        
         addSubview(actorImage)
         addConstraintsWithFormat(format: "H:|[v0(100)]", views: actorImage)
         addConstraintsWithFormat(format: "V:|[v0(100)]", views: actorImage)
@@ -150,8 +149,12 @@ class CastCell: UICollectionViewCell{
     let actorImage: UIImageView = {
         let image = UIImage(named: "Actor")
         let imageView = UIImageView(image: image)
+        imageView.layer.shadowColor = UIColor.black.cgColor
+        imageView.layer.shadowOpacity = 1
+        imageView.layer.shadowRadius = 4
+        imageView.layer.shadowOffset = CGSize(width: 0, height: 4)
         imageView.layer.cornerRadius = 100 / 2
-        imageView.layer.masksToBounds = true
+        imageView.clipsToBounds = true
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
