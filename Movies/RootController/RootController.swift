@@ -41,7 +41,6 @@ class RootController: UIViewController{
     
     fileprivate func setupViews(){
         // instantiate featured and menu controllers
-        //print("setupViews")
         featured = Featured(collectionViewLayout: UICollectionViewFlowLayout())
         featuredNavigationController = UINavigationController(rootViewController: featured)
         featured.delegate = self
@@ -53,7 +52,6 @@ class RootController: UIViewController{
         // insert featured and menu as views in container viewController
         view.insertSubview(menu.view, at: 0)
         view.addSubview(featuredNavigationController.view)
-        
     }
     
     fileprivate func setupNavigationBar(){

@@ -20,7 +20,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let rootController = RootController()
         
         Service.shared.fetchFeatured(1) { (movies) in
-            rootController.movies = movies
+            let pageOne = movies
+            Service.shared.fetchFeatured(2, completion: { (movies) in
+                let pageTwo = movies
+                rootController.movies = pageOne + pageTwo
+            })
         }
         
         // App Key Window

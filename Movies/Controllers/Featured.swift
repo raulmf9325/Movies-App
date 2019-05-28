@@ -24,7 +24,8 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     // for query of Movies
     var queryMovies: [Movie]?
     
-    var page = 1
+    var page = 3
+    
     
     // Search Text Field
     let searchTextField: UITextField = {
@@ -116,6 +117,11 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         }
         else if navBar.navBarTitle.text == "Upcoming"{
             Service.shared.fetchUpcoming(page: 1) { (movies) in
+                self.reloadHelper(movies: movies)
+            }
+        }
+        else if navBar.navBarTitle.text == "In Theaters"{
+            Service.shared.fetchInTheaters(page: 1) { (movies) in
                 self.reloadHelper(movies: movies)
             }
         }
@@ -223,7 +229,6 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
              cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GridFeaturedCellId", for: indexPath) as! GridFeaturedCell
         }
         
-        //cell.imageView.image = posters?[indexPath.item]
         cell.movie = movies?[indexPath.item]
         return cell
     }
@@ -262,13 +267,10 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     }
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
-        
         searchTextField.resignFirstResponder()
         
-        guard let numberOfMovies = movies?.count else {return}
-        
-        if let lastCell = collectionView.cellForItem(at: IndexPath(item: numberOfMovies - 1, section: 0)){
-            page += 1
+        guard let count = movies?.count else {return}
+        if let lastVisibleCell = collectionView.cellForItem(at: IndexPath(item: count - 1, section: 0)){
             updateCollectionWithNewContent()
         }
     }
@@ -279,26 +281,29 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         // Featured
         if title == "Featured"{
             Service.shared.fetchFeatured(page) { (movies) in
-                self.movies?.append(contentsOf: movies)
-                self.collectionView.reloadData()
+                let pageOne = movies
+                Service.shared.fetchFeatured(self.page + 1, completion: { (movies) in
+                    let pageTwo = movies
+                    self.movies?.append(contentsOf: pageOne + pageTwo)
+                })
             }
         }
         
         // In Theaters
-        if title == "In Theaters"{
+        else if title == "In Theaters"{
             Service.shared.fetchInTheaters(page: page) { (movies) in
                 self.movies?.append(contentsOf: movies)
-                self.collectionView.reloadData()
             }
         }
         
         // Upcoming
-        if title == "Upcoming"{
+       else if title == "Upcoming"{
             Service.shared.fetchUpcoming(page: page) { (movies) in
                 self.movies?.append(contentsOf: movies)
-                self.collectionView.reloadData()
             }
         }
+        
+         page += 2
     }
     
 } // END: Featured Controller

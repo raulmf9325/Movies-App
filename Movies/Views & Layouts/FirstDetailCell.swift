@@ -26,7 +26,7 @@ class FirstDetailCell: UICollectionViewCell{
         didSet{
             guard let url = posterURL else {return}
             imageView.sd_setImage(with: url) { (image, error, cache, url) in
-                print("ERROR: \(error?.localizedDescription)")
+                print("Error downloading image: \(error?.localizedDescription)")
             }
         }
     }

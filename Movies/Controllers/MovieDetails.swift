@@ -21,7 +21,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     var movie: Movie?{
         didSet{
             if let path = movie?.poster_path{
-                let stringURL = "https://image.tmdb.org/t/p/w300/\(path)"
+                let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
                 moviePosterURL = URL(string: stringURL)
             }
             

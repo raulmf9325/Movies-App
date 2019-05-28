@@ -16,7 +16,7 @@ class HeaderView: UICollectionViewCell {
             guard let url = posterImageURL else {return}
             headerImage.sd_setImage(with: url) { (image, error, cache, url) in
                 if let error = error{
-                    print("ERROR: \(error.localizedDescription)")
+                    print("Error downloading image: \(error.localizedDescription)")
                 }
             }
         }
