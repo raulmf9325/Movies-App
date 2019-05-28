@@ -13,6 +13,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     
     var movieName: String?
     var moviePosterURL: URL?
+    var headerPosterURL: URL?
     var movieRating: Double?
     var releaseDate: String?
     var plot: String?
@@ -23,6 +24,11 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             if let path = movie?.poster_path{
                 let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
                 moviePosterURL = URL(string: stringURL)
+            }
+  
+            if let headerPosterPath = movie?.backdrop_path{
+                let stringURL = "https://image.tmdb.org/t/p/w1280/\(headerPosterPath)"
+                headerPosterURL = URL(string: stringURL)
             }
             
             movieName = movie?.title
@@ -132,7 +138,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
         let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! HeaderView
-        header.posterImageURL = moviePosterURL
+        header.posterImageURL = headerPosterURL
         return header
     }
     
