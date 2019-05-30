@@ -14,79 +14,75 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     // delegate object for handling callbacks
     var delegate: FeaturedDelegate?
     
-    // Number of Items In Section
-    var movies: [Movie]?{
-        didSet{
-            self.collectionView.reloadData()
-        }
-    }
-    
-    // for query of Movies
-    var queryMovies: [Movie]?
+    var featuredMovies = [Movie]()
+    var upcomingMovies = [Movie]()
+    var inTheatersMovies = [Movie]()
     
     var page = 3
-    
-    
-    // Search Text Field
-    let searchTextField: UITextField = {
-        let textField = UITextField()
-        let font =  UIFont(name: "HelveticaNeue", size: 12)
-        textField.attributedPlaceholder = NSAttributedString(string: "     movie", attributes: [NSAttributedString.Key.foregroundColor : UIColor.black, NSAttributedString.Key.font: font ])
-        textField.font = font
-        textField.layer.cornerRadius = 10
-        textField.backgroundColor = .white
-        return textField
-    }()
     
     enum gridState{
         case grid
         case icons
     }
     
+    enum categoryState{
+        case featured
+        case upcoming
+        case inTheaters
+    }
+    
     var layoutState: gridState!
+    var category: categoryState!
     
     var navBar: NavigationBar!
     
-    
     // view did load
     override func viewDidLoad() {
+        category = .featured
         setupCollectionView()
-        setupNavigationBar()
-        setupTextField()
-        setupScreenEdgeSwipe()
-    }
-    
-    private func setupScreenEdgeSwipe(){
-        let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
-        edgePan.edges = .left
-        
-        view.addGestureRecognizer(edgePan)
-    }
-    
-    @objc func screenEdgeSwiped(_ recognizer: UIScreenEdgePanGestureRecognizer) {
-        if recognizer.state == .recognized {
-            delegate?.handleSreenEdgeSwipe()
-        }
-    }
-    
-    private func setupTextField(){
-        searchTextField.addTarget(self, action: #selector(textDidChange), for: UIControl.Event.editingChanged)
-    }
-    
-    private func setupNavigationBar(){
         navBar = NavigationBar(delegate: self, viewController: self)
+        searchTextField.addTarget(self, action: #selector(textDidChange), for: UIControl.Event.editingChanged)
+        setupScreenEdgeSwipe()
+        refresh(page: 1)
     }
     
     // SetUp Collection View
     private func setupCollectionView(){
-        collectionView.backgroundColor = .black
         layoutState = .icons
+        
+        collectionView.backgroundColor = .black
         collectionView.register(IconFeaturedCell.self, forCellWithReuseIdentifier: "IconFeaturedCellId")
         collectionView.register(GridFeaturedCell.self, forCellWithReuseIdentifier: "GridFeaturedCellId")
         
         // Space Between Cells
         let layout = collectionView.collectionViewLayout as! UICollectionViewFlowLayout
         layout.minimumInteritemSpacing = 10
+    }
+    
+    // Refresh all three movie categories with fresh content from the server
+    private func refresh(page: Int){
+        if page == 5{
+            collectionView.reloadData()
+            delegate?.finishedRefreshing()
+            return
+        }
+        else{
+            if page == 1{
+                featuredMovies = [Movie]()
+                upcomingMovies = [Movie]()
+                inTheatersMovies = [Movie]()
+            }
+            Service.shared.fetchFeatured(page) { (featuredMovies) in
+                Service.shared.fetchUpcoming(page: page, completion: { (upcomingMovies) in
+                    Service.shared.fetchInTheaters(page: page, completion: { (inTheatersMovies) in
+                        self.featuredMovies.append(contentsOf: featuredMovies)
+                        self.upcomingMovies.append(contentsOf: upcomingMovies)
+                        self.inTheatersMovies.append(contentsOf: inTheatersMovies)
+                        self.refresh(page: page + 1)
+                    })
+                })
+            }
+        }
     }
     
     func handleIconView(){
@@ -306,6 +302,31 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
          page += 2
     }
     
+    // Swipe-Back On Screen Edge Support
+    private func setupScreenEdgeSwipe(){
+        let edgePan = UIScreenEdgePanGestureRecognizer(target: self, action: #selector(screenEdgeSwiped))
+        edgePan.edges = .left
+        
+        view.addGestureRecognizer(edgePan)
+    }
+    
+    @objc func screenEdgeSwiped(_ recognizer: UIScreenEdgePanGestureRecognizer) {
+        if recognizer.state == .recognized {
+            delegate?.handleSreenEdgeSwipe()
+        }
+    }
+    
+    // Search Text Field
+    let searchTextField: UITextField = {
+        let textField = UITextField()
+        let font =  UIFont(name: "HelveticaNeue", size: 12)
+        textField.attributedPlaceholder = NSAttributedString(string: "     movie", attributes: [NSAttributedString.Key.foregroundColor : UIColor.black, NSAttributedString.Key.font: font ])
+        textField.font = font
+        textField.layer.cornerRadius = 10
+        textField.backgroundColor = .white
+        return textField
+    }()
+    
 } // END: Featured Controller
 
 
@@ -340,6 +361,7 @@ extension Featured{
 // MARK: Featured Delegate
 protocol FeaturedDelegate {
     func toggleMenu()
+    func finishedRefreshing()
     func updateMoviesBasedOnMenu(movies: [Movie], title: String)
     func handleSreenEdgeSwipe()
 }

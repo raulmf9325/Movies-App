@@ -13,14 +13,9 @@ class RootController: UIViewController{
     var menu: Menu!
     var featured: Featured!
     var featuredNavigationController: UINavigationController!
-    let menuExpandedOffSet: CGFloat = 130
     var navBar: NavigationBar!
     
-    var movies: [Movie]?{
-        didSet{
-            featured.movies = movies
-        }
-    }
+    let menuExpandedOffSet: CGFloat = 130
     
     enum SlideOutState{
         case collapsed
@@ -31,7 +26,6 @@ class RootController: UIViewController{
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         setupViews()
     }
     
@@ -44,7 +38,6 @@ class RootController: UIViewController{
         featured = Featured(collectionViewLayout: UICollectionViewFlowLayout())
         featuredNavigationController = UINavigationController(rootViewController: featured)
         featured.delegate = self
-        featured.movies = movies
         
         menu = Menu()
         menu.delegate = self
@@ -63,6 +56,10 @@ class RootController: UIViewController{
 
 
 extension RootController: FeaturedDelegate{
+    
+    func finishedRefreshing() {
+        
+    }
    
    @objc func toggleMenu() {
     
@@ -107,6 +104,12 @@ extension RootController: FeaturedDelegate{
             }
         }
     }
+    
+    /*
+     *    To Do:
+     *    Keep three separate lists: featured, upcoming and in-theaters
+          Only update with refresh
+     */
     
     func updateMoviesBasedOnMenu(movies: [Movie], title: String) {
         featured.movies = movies

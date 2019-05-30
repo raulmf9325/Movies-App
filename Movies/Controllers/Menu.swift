@@ -56,6 +56,10 @@ class Menu: UITableViewController{
         return header
     }
     
+    /*
+     *     To Do:
+           Remove below processing from Menu controller
+     */
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // Featured
         if indexPath.row == 0{
