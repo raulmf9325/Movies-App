@@ -63,17 +63,17 @@ class Menu: UITableViewController{
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // Featured
         if indexPath.row == 0{
-          
+          delegate?.categoryDidChange(category: "Featured")
         }
         
         // In theaters
         if indexPath.item == 1{
-           
+           delegate?.categoryDidChange(category: "In Theaters")
         }
         
         // Upcoming
         if indexPath.row == 2{
-           
+           delegate?.categoryDidChange(category: "Upcoming")
         }
     }
 

@@ -117,17 +117,8 @@ extension RootController: FeaturedDelegate{
           Only update with refresh
      */
     
-    func updateMoviesBasedOnMenu(movies: [Movie], title: String) {
-        //featured.movies = movies
-        featured.navBar.navBarTitle.text = title
-        
-        featured.collectionView.performBatchUpdates({
-            let indexSet = IndexSet(integersIn: 0...0)
-            self.featured.collectionView.reloadSections(indexSet)
-        }, completion: nil)
-        
-        featured.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: UICollectionView.ScrollPosition.bottom, animated: false)
-        
+    func categoryDidChange(category: String){
+        featured.categoryDidChange(category: category)
         toggleMenu()
     }
     

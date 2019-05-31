@@ -19,7 +19,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     var searchResult = [Movie]()
     
-    var page = 6
+    var page = 11
     
     enum gridState{
         case grid
@@ -363,11 +363,33 @@ extension Featured{
             self.searchTextField.text = text
         }
     }
+    
+    func categoryDidChange(category: String){
+        navBar.navBarTitle.text = category
+        
+        if(category == "Featured"){
+            self.category = .featured
+        }
+        else if(category == "Upcoming"){
+            self.category = .upcoming
+        }
+        else if(category == "In Theaters"){
+            self.category = .inTheaters
+        }
+        
+        collectionView.performBatchUpdates({
+            let indexSet = IndexSet(integersIn: 0...0)
+            self.collectionView.reloadSections(indexSet)
+        }, completion: nil)
+        
+        collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: UICollectionView.ScrollPosition.bottom, animated: false)
+    }
 }
+
 
 // MARK: Featured Delegate
 protocol FeaturedDelegate {
     func toggleMenu()
-    func updateMoviesBasedOnMenu(movies: [Movie], title: String)
+    func categoryDidChange(category: String)
     func handleSreenEdgeSwipe()
 }
