@@ -67,7 +67,6 @@ class BaseFeaturedCell: UICollectionViewCell{
     
     let imageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "picture_rect_white"))
-        imageView.backgroundColor = .lightGray
         imageView.layer.cornerRadius = 8
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
