@@ -19,7 +19,9 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     var searchResult = [Movie]()
     
-    var page = 11
+    var featuredPage = 11
+    var upcomingPage = 11
+    var inTheatersPage = 11
     
     enum gridState{
         case grid
@@ -247,7 +249,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         }
         
         if let lastVisibleCell = collectionView.cellForItem(at: IndexPath(item: count - 1, section: 0)){
-            updateCollectionWithNewContent()
+            fetchNewContent()
         }
     }
     
@@ -270,7 +272,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         return movie
     }
     
-    private func updateCollectionWithNewContent(){
+    private func fetchNewContent(){
         let title = navBar.navBarTitle.text
         
         /*  To Do
@@ -282,30 +284,30 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         
         // Featured
         if title == "Featured"{
-            Service.shared.fetchFeatured(page) { (movies) in
-                let pageOne = movies
-                Service.shared.fetchFeatured(self.page + 1, completion: { (movies) in
-                    let pageTwo = movies
-                    self.featuredMovies.append(contentsOf: pageOne + pageTwo)
-                })
+            Service.shared.fetchFeatured(featuredPage) { (movies) in
+                self.featuredMovies.append(contentsOf: movies)
+                self.featuredPage += 1
+                self.collectionView.reloadData()
             }
         }
         
         // In Theaters
         else if title == "In Theaters"{
-            Service.shared.fetchInTheaters(page: page) { (movies) in
+            Service.shared.fetchInTheaters(page: inTheatersPage) { (movies) in
                 self.inTheatersMovies.append(contentsOf: movies)
+                self.inTheatersPage += 1
+                self.collectionView.reloadData()
             }
         }
         
         // Upcoming
        else if title == "Upcoming"{
-            Service.shared.fetchUpcoming(page: page) { (movies) in
+            Service.shared.fetchUpcoming(page: upcomingPage) { (movies) in
                 self.upcomingMovies.append(contentsOf: movies)
+                self.upcomingPage += 1
+                self.collectionView.reloadData()
             }
         }
-        
-         page += 2
     }
     
     // Swipe-Back On Screen Edge Support
