@@ -63,23 +63,17 @@ class Menu: UITableViewController{
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         // Featured
         if indexPath.row == 0{
-            Service.shared.fetchFeatured(1) { (movies) in
-                self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "Featured")
-            }
+          
         }
         
         // In theaters
         if indexPath.item == 1{
-            Service.shared.fetchInTheaters(page: 1) { (movies) in
-                self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "In Theaters")
-            }
+           
         }
         
         // Upcoming
         if indexPath.row == 2{
-            Service.shared.fetchUpcoming(page: 1) { (movies) in
-                self.delegate?.updateMoviesBasedOnMenu(movies: movies, title: "Upcoming")
-            }
+           
         }
     }
 
