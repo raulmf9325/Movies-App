@@ -11,14 +11,15 @@ import UIKit
 // MARK: Featured view controller
 class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, NavigationProtocol{
     
-    // delegate object for handling callbacks
     var delegate: FeaturedDelegate?
     
     var featuredMovies = [Movie]()
     var upcomingMovies = [Movie]()
     var inTheatersMovies = [Movie]()
     
-    var page = 3
+    var searchResult = [Movie]()
+    
+    var page = 6
     
     enum gridState{
         case grid
@@ -36,7 +37,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     var navBar: NavigationBar!
     
-    // view did load
+   
     override func viewDidLoad() {
         category = .featured
         setupCollectionView()
@@ -46,7 +47,6 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         refresh(page: 1)
     }
     
-    // SetUp Collection View
     private func setupCollectionView(){
         layoutState = .icons
         
@@ -61,7 +61,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     // Refresh all three movie categories with fresh content from the server
     private func refresh(page: Int){
-        if page == 5{
+        if page == 6{
             collectionView.reloadData()
             delegate?.finishedRefreshing()
             return
@@ -103,39 +103,6 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
             self.collectionView.layoutIfNeeded()
         }
     }
-    
-    // MARK: reload
-    func reload(){
-        if navBar.navBarTitle.text == "Featured"{
-            Service.shared.fetchFeatured(1) { (movies) in
-                self.reloadHelper(movies: movies)
-            }
-        }
-        else if navBar.navBarTitle.text == "Upcoming"{
-            Service.shared.fetchUpcoming(page: 1) { (movies) in
-                self.reloadHelper(movies: movies)
-            }
-        }
-        else if navBar.navBarTitle.text == "In Theaters"{
-            Service.shared.fetchInTheaters(page: 1) { (movies) in
-                self.reloadHelper(movies: movies)
-            }
-        }
-    }
-    
-    private func reloadHelper(movies: [Movie]){
-        self.movies = movies
-        
-        self.collectionView.performBatchUpdates({
-            let indexSet = IndexSet(integersIn: 0...0)
-            self.collectionView.reloadSections(indexSet)
-        }, completion: nil)
-        
-        if self.movies?.count ?? 0 > 0{
-            self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: UICollectionView.ScrollPosition.bottom, animated: false)
-        }
-    }
-
     
     // MARK: toggle menu
     func handleHamburgerTap(){
@@ -189,12 +156,13 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     // Dismiss Search
     @objc func dismissSearch(){
-        reload()
         let title = navBar.navBarTitle.text!
         searchTextField.text = ""
         navBar.navBar.removeFromSuperview()
         navBar = NavigationBar(delegate: self, viewController: self)
         navBar.navBarTitle.text = title
+        searchResult = [Movie]()
+        collectionView.reloadData()
     }
     
     @objc func dismissKeyboard(){
@@ -209,8 +177,19 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     // Number Of Items in Section
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        guard let numberOfItemsInSection = movies?.count else {return 0}
-        return numberOfItemsInSection
+        // ongoing search
+        if searchResult.count > 0{
+            return searchResult.count
+        }
+        else if category == .featured{
+            return featuredMovies.count
+        }
+        else if category == .upcoming{
+            return upcomingMovies.count
+        }
+        else{
+            return inTheatersMovies.count
+        }
     }
     
     // Cell for Item at IndexPath
@@ -224,8 +203,8 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         else{
              cell = collectionView.dequeueReusableCell(withReuseIdentifier: "GridFeaturedCellId", for: indexPath) as! GridFeaturedCell
         }
-        
-        cell.movie = movies?[indexPath.item]
+     
+        cell.movie = movieForCellAtIndex(index: indexPath.item)
         return cell
     }
     
@@ -257,7 +236,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
         
         movieDetails.cast = cell.cast
-        movieDetails.movie = movies?[indexPath.item]
+        movieDetails.movie = movieForCellAtIndex(index: indexPath.item)
         
         navigationController?.pushViewController(movieDetails, animated: true)
     }
@@ -265,14 +244,54 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
         searchTextField.resignFirstResponder()
         
-        guard let count = movies?.count else {return}
+        var count = 0
+  
+        if searchResult.count > 0{
+            count = searchResult.count
+        }
+        else if category == .featured{
+            count = featuredMovies.count
+        }
+        else if category == .upcoming{
+            count = upcomingMovies.count
+        }
+        else{
+            count = inTheatersMovies.count
+        }
+        
         if let lastVisibleCell = collectionView.cellForItem(at: IndexPath(item: count - 1, section: 0)){
             updateCollectionWithNewContent()
         }
     }
     
+    private func movieForCellAtIndex(index: Int) -> Movie{
+        var movie = Movie()
+        
+        if searchResult.count > 0{
+            movie = searchResult[index]
+        }
+        else if category == .featured{
+            movie = featuredMovies[index]
+        }
+        else if category == .upcoming{
+            movie = upcomingMovies[index]
+        }
+        else{
+            movie = inTheatersMovies[index]
+        }
+        
+        return movie
+    }
+    
     private func updateCollectionWithNewContent(){
         let title = navBar.navBarTitle.text
+        
+        /*  To Do
+         */
+        // search
+        if searchResult.count > 0{
+            
+        }
         
         // Featured
         if title == "Featured"{
@@ -280,7 +299,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
                 let pageOne = movies
                 Service.shared.fetchFeatured(self.page + 1, completion: { (movies) in
                     let pageTwo = movies
-                    self.movies?.append(contentsOf: pageOne + pageTwo)
+                    self.featuredMovies.append(contentsOf: pageOne + pageTwo)
                 })
             }
         }
@@ -288,14 +307,14 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         // In Theaters
         else if title == "In Theaters"{
             Service.shared.fetchInTheaters(page: page) { (movies) in
-                self.movies?.append(contentsOf: movies)
+                self.inTheatersMovies.append(contentsOf: movies)
             }
         }
         
         // Upcoming
        else if title == "Upcoming"{
             Service.shared.fetchUpcoming(page: page) { (movies) in
-                self.movies?.append(contentsOf: movies)
+                self.upcomingMovies.append(contentsOf: movies)
             }
         }
         
@@ -338,18 +357,19 @@ extension Featured{
         var queryText = text.replacingOccurrences(of: " ", with: "+")
         
         if queryText.count == 0{
-            reload()
+            searchResult = [Movie]()
+            collectionView.reloadData()
             return
         }
         
         Service.shared.fetchMoviesWithQuery(query: queryText) { (movies) in
-            self.movies = movies
+            self.searchResult = movies
             self.collectionView.performBatchUpdates({
                 let indexSet = IndexSet(integersIn: 0...0)
                 self.collectionView.reloadSections(indexSet)
             }, completion: nil)
             
-            if self.movies?.count ?? 0 > 0{
+            if self.searchResult.count > 0{
                 self.collectionView.scrollToItem(at: IndexPath(item: 0, section: 0), at: UICollectionView.ScrollPosition.bottom, animated: false)
             }
             self.searchTextField.becomeFirstResponder()

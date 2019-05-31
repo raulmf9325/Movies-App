@@ -15,6 +15,8 @@ class RootController: UIViewController{
     var featuredNavigationController: UINavigationController!
     var navBar: NavigationBar!
     
+    let loadingPage = LoadingPage()
+    
     let menuExpandedOffSet: CGFloat = 130
     
     enum SlideOutState{
@@ -29,6 +31,11 @@ class RootController: UIViewController{
         setupViews()
     }
     
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        presentLoadingPage()
+//    }
+//    
     override var preferredStatusBarStyle: UIStatusBarStyle{
         return .lightContent
     }
@@ -50,6 +57,16 @@ class RootController: UIViewController{
     fileprivate func setupNavigationBar(){
         navBar = NavigationBar(delegate: self, viewController: self)
     }
+    
+    fileprivate func presentLoadingPage(){
+        print("presenting")
+       // present(loadingPage, animated: false, completion: nil)
+    }
+    
+    fileprivate func dismissLoadingPage(){
+        print("dismiss")
+        //loadingPage.dismiss()
+    }
 
     
 } // End of RootController
@@ -58,7 +75,7 @@ class RootController: UIViewController{
 extension RootController: FeaturedDelegate{
     
     func finishedRefreshing() {
-        
+        dismissLoadingPage()
     }
    
    @objc func toggleMenu() {
@@ -112,7 +129,7 @@ extension RootController: FeaturedDelegate{
      */
     
     func updateMoviesBasedOnMenu(movies: [Movie], title: String) {
-        featured.movies = movies
+        //featured.movies = movies
         featured.navBar.navBarTitle.text = title
         
         featured.collectionView.performBatchUpdates({
