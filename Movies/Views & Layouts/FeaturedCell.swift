@@ -41,23 +41,9 @@ class BaseFeaturedCell: UICollectionViewCell{
             self.imageView.image = UIImage(named: "picture_rect_white")
         }
     }
-    
-    private func downloadCast(){
-        if let id = movie?.id{
-            Service.shared.fetchMovieCast(movieID: id) { (cast) in
-                if cast == nil || cast?.count == 0{
-                    self.cast = nil
-                }
-                else{
-                    self.cast = cast
-                }
-            }
-        }
-    }
-    
+        
     var movie: Movie?{
         didSet{
-            downloadCast()
             downloadImage()
             nameLabel.text = movie?.title
         }
