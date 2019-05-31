@@ -12,23 +12,27 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
+    var rootController: RootController!
+    
+    var featuredMovies = [Movie]()
+    var upcomingMovies = [Movie]()
+    var inTheatersMovies = [Movie]()
 
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        // instance of root controller
-        let rootController = RootController()
-
         // App Key Window
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
-        window?.rootViewController = rootController
+        window?.rootViewController = UIStoryboard(name: "LaunchScreen", bundle: nil).instantiateInitialViewController()
+        
+        refresh(page: 1)
         
         // customizing navigation bar
         let appearance = UINavigationBar.appearance()
         appearance.barTintColor = UIColor.black
         appearance.isTranslucent = false
-        
+
         appearance.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white, NSAttributedString.Key.font: UIFont(name: "HelveticaNeue", size: 20)]
         
         return true
@@ -55,5 +59,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
 
+}
+
+extension AppDelegate{
+    func finishedRefreshing() {
+        // instance of root controller
+        rootController = RootController(featuredMovies: featuredMovies, upcomingMovies: upcomingMovies, inTheatersMovies: inTheatersMovies)
+        window?.rootViewController = rootController
+    }
+    
+    private func refresh(page: Int){
+        if page == 11{
+            finishedRefreshing()
+            return
+        }
+        else{
+            if page == 1{
+                featuredMovies = [Movie]()
+                upcomingMovies = [Movie]()
+                inTheatersMovies = [Movie]()
+            }
+            Service.shared.fetchFeatured(page) { (featuredMovies) in
+                Service.shared.fetchUpcoming(page: page, completion: { (upcomingMovies) in
+                    Service.shared.fetchInTheaters(page: page, completion: { (inTheatersMovies) in
+                        self.featuredMovies.append(contentsOf: featuredMovies)
+                        self.upcomingMovies.append(contentsOf: upcomingMovies)
+                        self.inTheatersMovies.append(contentsOf: inTheatersMovies)
+                        self.refresh(page: page + 1)
+                    })
+                })
+            }
+        }
+    }
 }
 

@@ -37,17 +37,28 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     var navBar: NavigationBar!
     
+    init(featuredMovies: [Movie], upcomingMovies: [Movie], inTheatersMovies: [Movie]){
+        super.init(collectionViewLayout: UICollectionViewFlowLayout())
+        self.featuredMovies.append(contentsOf: featuredMovies)
+        self.upcomingMovies.append(contentsOf: upcomingMovies)
+        self.inTheatersMovies.append(contentsOf: inTheatersMovies)
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
    
     override func viewDidLoad() {
-        category = .featured
         setupCollectionView()
-        navBar = NavigationBar(delegate: self, viewController: self)
-        searchTextField.addTarget(self, action: #selector(textDidChange), for: UIControl.Event.editingChanged)
-        setupScreenEdgeSwipe()
-        refresh(page: 1)
     }
     
     private func setupCollectionView(){
+        category = .featured
+        navBar = NavigationBar(delegate: self, viewController: self)
+        searchTextField.addTarget(self, action: #selector(textDidChange), for: UIControl.Event.editingChanged)
+        setupScreenEdgeSwipe()
+        
         layoutState = .icons
         
         collectionView.backgroundColor = .black
@@ -60,31 +71,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     }
     
     // Refresh all three movie categories with fresh content from the server
-    private func refresh(page: Int){
-        if page == 6{
-            collectionView.reloadData()
-            delegate?.finishedRefreshing()
-            return
-        }
-        else{
-            if page == 1{
-                featuredMovies = [Movie]()
-                upcomingMovies = [Movie]()
-                inTheatersMovies = [Movie]()
-            }
-            Service.shared.fetchFeatured(page) { (featuredMovies) in
-                Service.shared.fetchUpcoming(page: page, completion: { (upcomingMovies) in
-                    Service.shared.fetchInTheaters(page: page, completion: { (inTheatersMovies) in
-                        self.featuredMovies.append(contentsOf: featuredMovies)
-                        self.upcomingMovies.append(contentsOf: upcomingMovies)
-                        self.inTheatersMovies.append(contentsOf: inTheatersMovies)
-                        self.refresh(page: page + 1)
-                    })
-                })
-            }
-        }
-    }
-    
+   
     func handleIconView(){
         if layoutState == .icons{
             layoutState = .grid
@@ -381,7 +368,6 @@ extension Featured{
 // MARK: Featured Delegate
 protocol FeaturedDelegate {
     func toggleMenu()
-    func finishedRefreshing()
     func updateMoviesBasedOnMenu(movies: [Movie], title: String)
     func handleSreenEdgeSwipe()
 }

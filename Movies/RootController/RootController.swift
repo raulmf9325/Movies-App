@@ -15,7 +15,9 @@ class RootController: UIViewController{
     var featuredNavigationController: UINavigationController!
     var navBar: NavigationBar!
     
-    let loadingPage = LoadingPage()
+    var featuredMovies = [Movie]()
+    var upcomingMovies = [Movie]()
+    var inTheatersMovies = [Movie]()
     
     let menuExpandedOffSet: CGFloat = 130
     
@@ -26,14 +28,16 @@ class RootController: UIViewController{
     
     var menuState: SlideOutState = .collapsed
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    init(featuredMovies: [Movie], upcomingMovies: [Movie], inTheatersMovies: [Movie]){
+        super.init(nibName: nil, bundle: nil)
+        self.featuredMovies.append(contentsOf: featuredMovies)
+        self.upcomingMovies.append(contentsOf: upcomingMovies)
+        self.inTheatersMovies.append(contentsOf: inTheatersMovies)
         setupViews()
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        presentLoadingPage()
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle{
@@ -42,7 +46,7 @@ class RootController: UIViewController{
     
     fileprivate func setupViews(){
         // instantiate featured and menu controllers
-        featured = Featured(collectionViewLayout: UICollectionViewFlowLayout())
+        featured = Featured(featuredMovies: featuredMovies, upcomingMovies: upcomingMovies, inTheatersMovies: inTheatersMovies)
         featuredNavigationController = UINavigationController(rootViewController: featured)
         featured.delegate = self
         
@@ -58,25 +62,10 @@ class RootController: UIViewController{
         navBar = NavigationBar(delegate: self, viewController: self)
     }
     
-    fileprivate func presentLoadingPage(){
-        print("presenting")
-        present(loadingPage, animated: false, completion: nil)
-    }
-    
-    fileprivate func dismissLoadingPage(){
-        print("dismiss")
-        //loadingPage.dismiss()
-    }
-
-    
 } // End of RootController
 
 
 extension RootController: FeaturedDelegate{
-    
-    func finishedRefreshing() {
-        dismissLoadingPage()
-    }
    
    @objc func toggleMenu() {
     

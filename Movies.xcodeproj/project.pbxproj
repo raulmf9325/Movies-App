@@ -28,7 +28,6 @@
 		3EC2034021DC383100AD22C2 /* ColorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC2033F21DC383100AD22C2 /* ColorExtension.swift */; };
 		3EC2034421DC5E5500AD22C2 /* SecondDetailCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EC2034321DC5E5500AD22C2 /* SecondDetailCell.swift */; };
 		3ED180BF21C0D1C7009F6F23 /* FeaturedCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED180BE21C0D1C7009F6F23 /* FeaturedCell.swift */; };
-		3ED8906F22A0AC6A0019870C /* LoadingPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3ED8906E22A0AC6A0019870C /* LoadingPage.swift */; };
 		3EED9D6021D2BF600093BF78 /* StretchyHeaderLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EED9D5F21D2BF600093BF78 /* StretchyHeaderLayout.swift */; };
 		DBA0ADB297846264040BBB28 /* Pods_Movies.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 42E35BC4E150AF8B735F5335 /* Pods_Movies.framework */; };
 /* End PBXBuildFile section */
@@ -58,7 +57,6 @@
 		3EC2033F21DC383100AD22C2 /* ColorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorExtension.swift; sourceTree = "<group>"; };
 		3EC2034321DC5E5500AD22C2 /* SecondDetailCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SecondDetailCell.swift; sourceTree = "<group>"; };
 		3ED180BE21C0D1C7009F6F23 /* FeaturedCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeaturedCell.swift; sourceTree = "<group>"; };
-		3ED8906E22A0AC6A0019870C /* LoadingPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingPage.swift; sourceTree = "<group>"; };
 		3EED9D5F21D2BF600093BF78 /* StretchyHeaderLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StretchyHeaderLayout.swift; sourceTree = "<group>"; };
 		42E35BC4E150AF8B735F5335 /* Pods_Movies.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Movies.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A360386C82D83DBB6DA4BE5C /* Pods-Movies.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Movies.release.xcconfig"; path = "Pods/Target Support Files/Pods-Movies/Pods-Movies.release.xcconfig"; sourceTree = "<group>"; };
@@ -175,7 +173,6 @@
 				3EA7B6F121BE1BF5004FE49A /* Featured.swift */,
 				3EC093EF21C37A67003B7F2F /* MovieDetails.swift */,
 				3E30BA96228F668B00EEB9BA /* VideoViewController.swift */,
-				3ED8906E22A0AC6A0019870C /* LoadingPage.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -325,7 +322,6 @@
 				3EED9D6021D2BF600093BF78 /* StretchyHeaderLayout.swift in Sources */,
 				3E30BA97228F668B00EEB9BA /* VideoViewController.swift in Sources */,
 				3EC2033E21DAFCC700AD22C2 /* FirstDetailCell.swift in Sources */,
-				3ED8906F22A0AC6A0019870C /* LoadingPage.swift in Sources */,
 				3E31AC1D21DEA50300F9B6A5 /* ThirdDetailCell.swift in Sources */,
 				3EA7B6F221BE1BF5004FE49A /* Featured.swift in Sources */,
 				3EA7B6D421BD9CEC004FE49A /* AppDelegate.swift in Sources */,
