@@ -31,11 +31,11 @@ class RootController: UIViewController{
         setupViews()
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        presentLoadingPage()
-//    }
-//    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        presentLoadingPage()
+    }
+    
     override var preferredStatusBarStyle: UIStatusBarStyle{
         return .lightContent
     }
@@ -60,7 +60,7 @@ class RootController: UIViewController{
     
     fileprivate func presentLoadingPage(){
         print("presenting")
-       // present(loadingPage, animated: false, completion: nil)
+        present(loadingPage, animated: false, completion: nil)
     }
     
     fileprivate func dismissLoadingPage(){
