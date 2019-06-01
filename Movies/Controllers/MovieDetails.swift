@@ -11,6 +11,8 @@ import UIKit
 // MARK: MovieDetails Class
 class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     
+    var numberOfItemsInSection = 0
+    
     var movieName: String?
     var moviePosterURL: URL?
     var headerPosterURL: URL?
@@ -35,7 +37,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             movieRating = movie?.vote_average
             releaseDate = movie?.release_date
             plot = movie?.overview
-            collectionView.reloadData()
+           // collectionView.reloadData()
         }
     }
     
@@ -73,6 +75,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         collectionView.showsVerticalScrollIndicator = false
         collectionView.contentInsetAdjustmentBehavior = .never
         collectionView.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: headerId)
+        collectionView.register(UICollectionViewCell.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "temporary")
         collectionView.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "CellId")
         collectionView.register(FirstDetailCell.self, forCellWithReuseIdentifier: "FirstCellId")
         collectionView.register(SecondDetailCell.self, forCellWithReuseIdentifier: "SecondCellId")
@@ -119,17 +122,16 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        var numberOfItems = 3
         
-        if plot != nil && ((plot?.count ?? 0) > 0){
-            numberOfItems += 1
-        }
-        
-        if cast != nil{
-            numberOfItems += 1
-        }
-        
-        return numberOfItems
+//        if plot != nil && ((plot?.count ?? 0) > 0){
+//            numberOfItemsInSection += 1
+//        }
+//
+//        if cast != nil{
+//            numberOfItemsInSection += 1
+//        }
+//
+        return numberOfItemsInSection
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
@@ -137,9 +139,17 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     }
     
     override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! HeaderView
-        header.posterImageURL = headerPosterURL
-        return header
+        if numberOfItemsInSection == 0{
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "temporary", for: indexPath)
+            header.backgroundColor = .white
+            return header
+            
+        }
+        else{
+            let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! HeaderView
+            header.posterImageURL = headerPosterURL
+            return header
+        }
     }
     
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
