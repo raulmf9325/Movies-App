@@ -18,12 +18,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="collage" translatesAutoresizingMaskIntoConstraints="NO" id="85J-ex-keJ">
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="collage" translatesAutoresizingMaskIntoConstraints="NO" id="85J-ex-keJ">
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <constraints>
+                            <constraint firstAttribute="trailing" secondItem="85J-ex-keJ" secondAttribute="trailing" id="19i-ah-rK9"/>
+                            <constraint firstItem="85J-ex-keJ" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="E4G-pd-VM3"/>
+                            <constraint firstItem="85J-ex-keJ" firstAttribute="top" secondItem="Ze5-6b-2t3" secondAttribute="top" id="r9b-Qz-iBc"/>
+                            <constraint firstItem="85J-ex-keJ" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="t24-my-ra1"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                 </viewController>
