@@ -39,6 +39,9 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     var navBar: NavigationBar!
     
+    // for transition animator
+    var selectedFrame: CGRect?
+    
     init(featuredMovies: [Movie], upcomingMovies: [Movie], inTheatersMovies: [Movie]){
         super.init(collectionViewLayout: UICollectionViewFlowLayout())
         self.featuredMovies.append(contentsOf: featuredMovies)
@@ -53,6 +56,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
    
     override func viewDidLoad() {
         setupCollectionView()
+        navigationController?.delegate = self
     }
     
     private func setupCollectionView(){
@@ -224,10 +228,12 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         
         let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
         
-        movieDetails.cast = cell.cast
+        movieDetails.navigationDelegate = self
         movieDetails.movie = movieForCellAtIndex(index: indexPath.item)
         
-        navigationController?.pushViewController(movieDetails, animated: true)
+        let selectedFrame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: view.frame.height)
+        
+        pushController(selectedFrame: selectedFrame, vc: movieDetails)
     }
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -394,4 +400,42 @@ protocol FeaturedDelegate {
     func toggleMenu()
     func categoryDidChange(category: String)
     func handleSreenEdgeSwipe()
+}
+
+/*  Custom Transition Animation
+ */
+extension Featured: UINavigationControllerDelegate{
+    
+    func navigationController(_ navigationController: UINavigationController, animationControllerFor operation: UINavigationController.Operation, from fromVC: UIViewController, to toVC: UIViewController) -> UIViewControllerAnimatedTransitioning? {
+        
+        guard let frame = selectedFrame else {return nil}
+        
+        switch operation{
+        case .push:
+            return TransitionAnimator(duration: 0.3, isPresenting: true, originFrame: frame)
+        default:
+            return TransitionAnimator(duration: 0.3, isPresenting: false, originFrame: frame)
+        }
+    }
+    
+}
+
+protocol NavigationDelegate{
+    func pushController(selectedFrame: CGRect, vc: UIViewController)
+    func pop(originFrame: CGRect?, animated: Bool)
+}
+
+extension Featured: NavigationDelegate{
+    func pushController(selectedFrame: CGRect, vc: UIViewController){
+        self.selectedFrame = selectedFrame
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    func pop(originFrame: CGRect?, animated: Bool){
+        if originFrame != nil{
+            self.selectedFrame = originFrame!
+        }
+        
+        navigationController?.popViewController(animated: animated)
+    }
 }

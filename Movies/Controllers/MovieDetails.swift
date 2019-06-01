@@ -11,6 +11,8 @@ import UIKit
 // MARK: MovieDetails Class
 class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     
+    var navigationDelegate: NavigationDelegate!
+    
     var numberOfItemsInSection = 0
     
     var movieName: String?
@@ -118,7 +120,8 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     }
     
     @objc func handleBackButtonTap(){
-        navigationController?.popToRootViewController(animated: true)
+        let originFrame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: view.frame.height)
+        navigationDelegate.pop(originFrame: originFrame, animated: true)
     }
     
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
