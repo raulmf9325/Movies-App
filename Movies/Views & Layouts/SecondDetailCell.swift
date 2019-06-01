@@ -15,54 +15,13 @@ protocol WatchTrailerDelegate{
 class SecondDetailCell: UICollectionViewCell{
     
     var trailerDelegate: WatchTrailerDelegate?
-    
-    var movieID: Int?{
+    var videoURL: URL?{
         didSet{
-            // fetch genres
-            Service.shared.fetchMovieGenres(movieID: movieID!) { (genres) in
-                guard let genres = genres else {return}
-                if genres.count > 0{
-                var genre = ""
-                for i in 0 ..< genres.count{
-                    if i < 5{
-                        if let name = genres[i].name{
-                            genre.append(contentsOf: name)
-                            if i < genres.count - 1 && i < 4{
-                                genre += ", "
-                            }
-                            else{
-                                genre += " "
-                            }
-                        }
-                    }
-                }
-                    self.genre.text = genre
-                }
-                else{
-                    self.genreLabel.text = ""
-                    self.genre.text = ""
-                }
-            }
-            
-            // fetch trailer URL
-            Service.shared.fetchMovieTrailerURL(movieID: movieID!) { (trailers) in
-                guard let trailers = trailers else {return}
-                if trailers.count > 0{
-                    if let key = trailers[0].key{
-                        self.videoURL = URL(string: "https://www.youtube.com/embed/\(key)")
-                    }
-                    else{
-                        self.handleNoTrailer()
-                    }
-                }
-                else{
-                    self.handleNoTrailer()
-                }
+            if videoURL == nil{
+                handleNoTrailer()
             }
         }
     }
-    
-    var videoURL: URL?
     
     override init(frame: CGRect) {
         super.init(frame: frame)

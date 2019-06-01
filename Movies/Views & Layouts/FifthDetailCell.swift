@@ -10,33 +10,11 @@ import UIKit
 
 class FifthDetailCell: UICollectionViewCell{
     
-    var movie: Movie?{
+    var similar: [Movie]?{
         didSet{
-            // find similar movies
-            if let genres = movie?.genre_ids{
-                var genreString = ""
-                for index in 0 ... 2{
-                    if index + 1 <= genres.count{
-                        genreString.append(contentsOf: "\(genres[index]),")
-                    }
-                }
-                
-                Service.shared.fetchMoviesWithGenres(genres: genreString) { (similarMovies) in
-                    var similar = [Movie]()
-                    for similarMovie in similarMovies{
-                        if similarMovie.title != self.movie?.title{
-                            similar.append(similarMovie)
-                        }
-                    }
-                
-                    self.similar = similar
-                    self.collection.reloadData()
-                }
-            }
+            collection.reloadData()
         }
     }
-    
-    var similar: [Movie]?
     
     var navigationController: UINavigationController?
     
@@ -51,7 +29,6 @@ class FifthDetailCell: UICollectionViewCell{
     
     
     fileprivate func setupViews(){
-        
         addSubview(similarMoviesLabel)
         addConstraintsWithFormat(format: "H:|-16-[v0]", views: similarMoviesLabel)
         addConstraintsWithFormat(format: "V:|-20-[v0]", views: similarMoviesLabel)
@@ -110,12 +87,8 @@ extension FifthDetailCell: UICollectionViewDelegateFlowLayout, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        let cell = collectionView.cellForItem(at: indexPath) as! SimilarMovieCell
-        
         let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
         
-        movieDetails.cast = cell.cast
         movieDetails.movie = similar?[indexPath.item]
         
         navigationController?.pushViewController(movieDetails, animated: true)
@@ -126,7 +99,6 @@ class SimilarMovieCell: UICollectionViewCell{
     
     var movie: Movie?{
         didSet{
-            
             if let path = movie?.poster_path{
                 downloadImage(path: path)
             }
@@ -139,8 +111,6 @@ class SimilarMovieCell: UICollectionViewCell{
             if let rating = movie?.vote_average{
                 similarMovieRating.text = "\(rating * 10)%"
             }
-            
-            downloadCast()
         }
     }
     
@@ -173,19 +143,6 @@ class SimilarMovieCell: UICollectionViewCell{
         let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
         let similarMovieImageURL = URL(string: stringURL)
         similarMovieImage.sd_setImage(with: similarMovieImageURL) { (image, error, cache, url) in }
-    }
-    
-    private func downloadCast(){
-        if let id = movie?.id{
-            Service.shared.fetchMovieCast(movieID: id) { (cast) in
-                if cast == nil || cast?.count == 0{
-                    self.cast = nil
-                }
-                else{
-                    self.cast = cast
-                }
-            }
-        }
     }
     
     let similarMovieImage: UIImageView = {

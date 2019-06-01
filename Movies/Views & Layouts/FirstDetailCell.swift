@@ -10,30 +10,12 @@ import UIKit
 
 class FirstDetailCell: UICollectionViewCell{
     
-    var movieID: Int?{
-        didSet{
-            Service.shared.fetchMovieDuration(movieID: movieID!) { (duration) in
-                if let runtime = duration{
-                    let hours = runtime / 60
-                    let minutes = runtime % 60
-                    self.durationLabel.text = "\(hours)h \(minutes)min"
-                }
-            }
-        }
-    }
-    
-    var posterURL: URL?{
-        didSet{
-            guard let url = posterURL else {return}
-            imageView.sd_setImage(with: url) { (image, error, cache, url) in
-                print("Error downloading image: \(error?.localizedDescription)")
-            }
-        }
-    }
-    
     var movieRating: Double?{
         didSet{
-            guard let rating = movieRating else {return}
+            guard let rating = movieRating else {
+                ratingLabel.text = "rating: not available"
+                return
+            }
             ratingLabel.text = "rating: \(rating * 10)%"
         }
     }

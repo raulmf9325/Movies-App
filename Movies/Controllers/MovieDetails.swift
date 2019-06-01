@@ -10,38 +10,25 @@ import UIKit
 import NVActivityIndicatorView
 
 // MARK: MovieDetails Class
-class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayout{
+class MovieDetails: UICollectionViewController{
     
     var navigationDelegate: NavigationDelegate!
     var activityIndicator: NVActivityIndicatorView!
     
     var numberOfItemsInSection = 0
     
-    var movieName: String?
-    var moviePosterURL: URL?
-    var headerPosterURL: URL?
-    var movieRating: Double?
-    var releaseDate: String?
-    var plot: String?
-    var cast: [Cast]?
+    var downloadComplete = false
+    var backdropComplete = false
+    var posterComplete = false
+    var castComplete = false
+    var genresComplete = false
+    var durationComplete = false
+    var trailerComplete = false
+    var similarMoviesComplete = false
     
     var movie: Movie?{
         didSet{
-            if let path = movie?.poster_path{
-                let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
-                moviePosterURL = URL(string: stringURL)
-            }
-  
-            if let headerPosterPath = movie?.backdrop_path{
-                let stringURL = "https://image.tmdb.org/t/p/w1280/\(headerPosterPath)"
-                headerPosterURL = URL(string: stringURL)
-            }
-            
-            movieName = movie?.title
-            movieRating = movie?.vote_average
-            releaseDate = movie?.release_date
-            plot = movie?.overview
-           // collectionView.reloadData()
+            fetchContent()
         }
     }
     
@@ -140,16 +127,224 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         navigationDelegate.pop(originFrame: originFrame, animated: true)
     }
     
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    fileprivate func fetchContent() {
         
-//        if plot != nil && ((plot?.count ?? 0) > 0){
-//            numberOfItemsInSection += 1
-//        }
-//
-//        if cast != nil{
-//            numberOfItemsInSection += 1
-//        }
-//
+        let movieID = movie!.id!
+        
+        // fetch poster
+        if let path = movie?.poster_path{
+            let imageURL = URL(string: "https://image.tmdb.org/t/p/w500/\(path)")
+            poster.sd_setImage(with: imageURL) { (image, error, cache, url) in
+                self.posterComplete = true
+                self.checkDownload()
+            }
+        }
+        
+        // fetch backdrop
+        if let headerPosterPath = movie?.backdrop_path{
+            let imageURL = URL(string: "https://image.tmdb.org/t/p/w1280/\(headerPosterPath)")
+            backdrop.sd_setImage(with: imageURL) { (image, error, cache, url) in
+                self.backdropComplete = true
+                self.checkDownload()
+            }
+        }
+        
+        // fetch duration
+        Service.shared.fetchMovieDuration(movieID: movieID) { (duration) in
+            self.durationComplete = true
+            if let runtime = duration{
+                let hours = runtime / 60
+                let minutes = runtime % 60
+                self.duration = "\(hours)h \(minutes)min"
+            }
+            self.checkDownload()
+        }
+        
+        // fetch genres
+        Service.shared.fetchMovieGenres(movieID: movieID) { (genres) in
+            self.genresComplete = true
+            self.checkDownload()
+            guard let genres = genres else {return}
+            if genres.count > 0{
+                var genre = ""
+                for i in 0 ..< genres.count{
+                    if i < 5{
+                        if let name = genres[i].name{
+                            genre.append(contentsOf: name)
+                            if i < genres.count - 1 && i < 4{
+                                genre += ", "
+                            }
+                            else{
+                                genre += " "
+                            }
+                        }
+                    }
+                }
+                self.genres += genre
+            }
+            else{
+                self.genres += "not available"
+            }
+        }
+        
+        // fetch trailer URL
+        Service.shared.fetchMovieTrailerURL(movieID: movieID) { (trailers) in
+            self.trailerComplete = true
+            self.checkDownload()
+            guard let trailers = trailers else {return}
+            if trailers.count > 0{
+                if let key = trailers[0].key{
+                    self.videoURL = URL(string: "https://www.youtube.com/embed/\(key)")
+                }
+            }
+        }
+        
+        // fetch cast
+        Service.shared.fetchMovieCast(movieID: movieID) { (movieCast) in
+            self.castComplete = true
+            self.checkDownload()
+            guard let casting = movieCast else {return}
+            var tmp = [Cast]()
+            for (_, profile) in casting.enumerated(){
+                if profile.name != nil{
+                    tmp.append(profile)
+                }
+            }
+            self.cast = tmp
+        }
+        
+        // fetch similar movies
+        if let genres = movie?.genre_ids{
+            var genreString = ""
+            for index in 0 ... 2{
+                if index + 1 <= genres.count{
+                    genreString.append(contentsOf: "\(genres[index]),")
+                }
+            }
+            
+            Service.shared.fetchMoviesWithGenres(genres: genreString) { (similarMovies) in
+                self.similarMoviesComplete = true
+                self.checkDownload()
+                var similar = [Movie]()
+                for similarMovie in similarMovies{
+                    if similarMovie.title != self.movie?.title{
+                        similar.append(similarMovie)
+                    }
+                }
+
+                self.similarMovies = similar
+            }
+        }
+        
+        // fetch name, rating, duration, release date and plot
+        movieName = movie?.title
+        movieRating = movie?.vote_average
+        releaseDate = movie?.release_date
+        plot = movie?.overview
+    }
+    
+    fileprivate func checkDownload(){
+        downloadComplete = true
+        
+        [backdropComplete, posterComplete, castComplete, genresComplete,
+         durationComplete, trailerComplete, similarMoviesComplete].forEach { (itemComplete) in
+            if !itemComplete{
+                downloadComplete = false
+            }
+        }
+        
+        if downloadComplete{
+            print("download complete")
+            
+            numberOfItemsInSection = 3
+            
+            if plot != nil && ((plot?.count ?? 0) > 0){
+                numberOfItemsInSection += 1
+            }
+            
+            if cast != nil{
+                numberOfItemsInSection += 1
+            }
+            
+            collectionView.reloadData()
+        }
+    }
+    
+    
+    /*  Stored Properties
+     */
+    
+    // navBar view
+    let navBar: UIView = {
+        let bar = UIView()
+        bar.backgroundColor = UIColor(white: 0, alpha: 0.6)
+        return bar
+    }()
+    
+    // navBar left button
+    let navBarLeftButton: UIButton = {
+        let button = UIButton()
+        button.setImage(UIImage(named: "Back"), for: .normal)
+        return button
+    }()
+    
+    // navBar title
+    let navBarTitle: UILabel = {
+        let title = UILabel()
+        title.text = "Featured"
+        title.font = UIFont(name: "HelveticaNeue", size: 20)
+        title.textColor = .white
+        title.textAlignment = .center
+        return title
+    }()
+    
+    // activity indicator container
+    let activityIndicatorContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = .darkGray
+        view.layer.cornerRadius = 12
+        return view
+    }()
+    
+    // backdrop
+    let backdrop: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "picture"))
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+    
+    // poster
+    let poster: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "picture_rect_white"))
+        imageView.layer.shadowColor = UIColor.black.cgColor
+        imageView.layer.shadowOpacity = 1
+        imageView.layer.shadowRadius = 8
+        imageView.layer.shadowOffset = CGSize(width: 0, height: 4)
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
+    
+    var movieName: String?
+    var moviePosterURL: URL?
+    var headerPosterURL: URL?
+    var movieRating: Double?
+    var releaseDate: String?
+    var plot: String?
+    var cast: [Cast]?
+    
+    var duration = ""
+    var genres = "Genre: "
+    var videoURL: URL?
+    
+    var similarMovies = [Movie]()
+}
+
+/*  Collection View methods
+ */
+
+extension MovieDetails: UICollectionViewDelegateFlowLayout{
+    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return numberOfItemsInSection
     }
     
@@ -166,7 +361,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         }
         else{
             let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: headerId, for: indexPath) as! HeaderView
-            header.posterImageURL = headerPosterURL
+            header.headerImage.image = backdrop.image
             return header
         }
     }
@@ -177,17 +372,18 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         
         if indexPath.row == 0{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FirstCellId", for: indexPath) as! FirstDetailCell
-            cell.movieID = movie?.id
             cell.movieNameLabel.text = movieName
-            cell.posterURL = moviePosterURL
+            cell.imageView.image = poster.image
             cell.movieRating = movieRating
+            cell.durationLabel.text = duration
             return cell
         }
         
         if indexPath.row == 1{
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SecondCellId", for: indexPath) as! SecondDetailCell
             cell.releaseDate.text = releaseDate
-            cell.movieID = movie?.id
+            cell.genreLabel.text = genres
+            cell.videoURL = videoURL
             cell.trailerDelegate = self
             return cell
         }
@@ -196,12 +392,12 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
             if plot == nil || plot?.count == 0{
                 if cast != nil{
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
-                    cell.movieID = movie?.id
+                    cell.cast = cast
                     return cell
                 }
                 else{
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
-                    cell.movie = movie
+                    cell.similar = similarMovies
                     cell.navigationController = self.navigationController
                     return cell
                 }
@@ -215,27 +411,27 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         if indexPath.row == 3{
             if plot == nil || plot?.count == 0{
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
-                cell.movie = movie
+                cell.similar = similarMovies
                 cell.navigationController = self.navigationController
                 return cell
             }
             else{
                 if cast != nil{
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
-                    cell.movieID = movie?.id
+                    cell.cast = cast
                     return cell
                 }
                 else{
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
-                    cell.movie = movie
+                    cell.similar = similarMovies
                     cell.navigationController = self.navigationController
                     return cell
                 }
             }
         }
-       
+        
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
-        cell.movie = movie
+        cell.similar = similarMovies
         cell.navigationController = self.navigationController
         return cell
     }
@@ -245,7 +441,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         if animatedCells[indexPath.item] == .Animated{
             return
         }
-
+        
         animatedCells[indexPath.item] = .Animated
         
         cell.frame.origin.y -= 40
@@ -258,7 +454,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         if (numberOfLines >= 3.5 && indexPath.item > 2) || (indexPath.item == 4 || (indexPath.item == 3 && (plot == nil || plot?.count == 0))) {
             delay -= 1
         }
-       
+        
         UIView.animate(withDuration: 0.4, delay: delay, options: UIView.AnimationOptions.curveEaseOut, animations: {
             cell.frame.origin.x = 0
         }) { (_) in
@@ -275,7 +471,7 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         }
         
         if indexPath.row == 1{
-                return CGSize(width: width, height: 100)
+            return CGSize(width: width, height: 100)
         }
         
         if indexPath.row == 2{
@@ -319,41 +515,8 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
         return CGSize(width: view.frame.width, height: 300)
     }
-    
-    
-    // navBar view
-    let navBar: UIView = {
-        let bar = UIView()
-        bar.backgroundColor = UIColor(white: 0, alpha: 0.6)
-        return bar
-    }()
-    
-    // navBar left button
-    let navBarLeftButton: UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named: "Back"), for: .normal)
-        return button
-    }()
-    
-    // navBar title
-    let navBarTitle: UILabel = {
-        let title = UILabel()
-        title.text = "Featured"
-        title.font = UIFont(name: "HelveticaNeue", size: 20)
-        title.textColor = .white
-        title.textAlignment = .center
-        return title
-    }()
-    
-    // activity indicator container
-    let activityIndicatorContainer: UIView = {
-        let view = UIView()
-        view.backgroundColor = .darkGray
-        view.layer.cornerRadius = 12
-        return view
-    }()
-    
 }
+
 
 extension MovieDetails: WatchTrailerDelegate{
     func playTrailer(url: URL) {

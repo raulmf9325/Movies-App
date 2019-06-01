@@ -11,16 +11,6 @@ import UIKit
 class HeaderView: UICollectionViewCell {
     
     let navBarHeight: CGFloat = 75
-    var posterImageURL: URL?{
-        didSet{
-            guard let url = posterImageURL else {return}
-            headerImage.sd_setImage(with: url) { (image, error, cache, url) in
-                if let error = error{
-                    print("Error downloading image: \(error.localizedDescription)")
-                }
-            }
-        }
-    }
     
     override init(frame: CGRect) {
         super.init(frame: frame)

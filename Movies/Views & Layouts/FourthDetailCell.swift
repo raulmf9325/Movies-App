@@ -10,23 +10,12 @@ import UIKit
 
 class FourthDetailCell: UICollectionViewCell{
     
-    var movieID: Int?{
+ 
+    var cast: [Cast]?{
         didSet{
-            Service.shared.fetchMovieCast(movieID: movieID!) { (movieCast) in
-                guard let casting = movieCast else {return}
-                var tmp = [Cast]()
-                for (index, profile) in casting.enumerated(){
-                    if profile.name != nil{
-                        tmp.append(profile)
-                    }
-                }
-                self.cast = tmp
-                self.collection.reloadData()
-            }
+            collection.reloadData()
         }
     }
-    
-    var cast: [Cast]?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -49,7 +38,6 @@ class FourthDetailCell: UICollectionViewCell{
         collection.delegate = self
         collection.dataSource = self
         collection.register(CastCell.self, forCellWithReuseIdentifier: "CellId")
-        
     }
     
     let castLabel: UILabel = {

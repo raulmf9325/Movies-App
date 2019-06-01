@@ -39,7 +39,7 @@ class ThirdDetailCell: UICollectionViewCell{
     
     let plotTextView: UITextView = {
         let text = UITextView()
-        text.text = "Thomas leads some escaped Gladers on their final and most dangerous mission yet. To save their friends, they must break into the legendary Last City, a WCKD-controlled labyrinth that may turn out to be the deadliest maze of all. Anyone who makes it out alive will get answers to the questions that the Gladers have been asking since they arrived in the maze."
+        text.text = ""
         text.textColor = .lightGray
         text.font = UIFont.systemFont(ofSize: 12)
         text.isEditable = false
