@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import NVActivityIndicatorView
 
 // MARK: MovieDetails Class
 class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayout{
     
     var navigationDelegate: NavigationDelegate!
+    var activityIndicator: NVActivityIndicatorView!
     
     var numberOfItemsInSection = 0
     
@@ -54,9 +56,23 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        startActivityIndicator()
         setupCollectionView()
         setupNavigationBar()
         setupScreenEdgeSwipe()
+    }
+    
+    fileprivate func startActivityIndicator() {
+        view.addSubview(activityIndicatorContainer)
+        activityIndicatorContainer.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicatorContainer.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor).isActive = true
+        activityIndicatorContainer.centerYAnchor.constraint(equalTo: collectionView.centerYAnchor).isActive = true
+        activityIndicatorContainer.widthAnchor.constraint(equalToConstant: 80).isActive = true
+        activityIndicatorContainer.heightAnchor.constraint(equalToConstant: 80).isActive = true
+        
+        activityIndicator = NVActivityIndicatorView(frame: CGRect(x: 0, y: 0, width: 80, height: 80), type: .circleStrokeSpin, color: .white, padding: 17)
+        activityIndicatorContainer.addSubview(activityIndicator)
+        activityIndicator.startAnimating()
     }
     
     private func setupScreenEdgeSwipe(){
@@ -327,6 +343,14 @@ class MovieDetails: UICollectionViewController, UICollectionViewDelegateFlowLayo
         title.textColor = .white
         title.textAlignment = .center
         return title
+    }()
+    
+    // activity indicator container
+    let activityIndicatorContainer: UIView = {
+        let view = UIView()
+        view.backgroundColor = .darkGray
+        view.layer.cornerRadius = 12
+        return view
     }()
     
 }

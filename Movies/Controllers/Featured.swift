@@ -412,9 +412,9 @@ extension Featured: UINavigationControllerDelegate{
         
         switch operation{
         case .push:
-            return TransitionAnimator(duration: 0.3, isPresenting: true, originFrame: frame)
+            return TransitionAnimator(duration: 0.2, isPresenting: true, originFrame: frame)
         default:
-            return TransitionAnimator(duration: 0.3, isPresenting: false, originFrame: frame)
+            return TransitionAnimator(duration: 0.2, isPresenting: false, originFrame: frame)
         }
     }
     

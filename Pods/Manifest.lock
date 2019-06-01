@@ -1,18 +1,24 @@
 PODS:
+  - NVActivityIndicatorView (4.4.0):
+    - NVActivityIndicatorView/Presenter (= 4.4.0)
+  - NVActivityIndicatorView/Presenter (4.4.0)
   - SDWebImage (4.4.2):
     - SDWebImage/Core (= 4.4.2)
   - SDWebImage/Core (4.4.2)
 
 DEPENDENCIES:
+  - NVActivityIndicatorView
   - SDWebImage
 
 SPEC REPOS:
   https://github.com/cocoapods/specs.git:
+    - NVActivityIndicatorView
     - SDWebImage
 
 SPEC CHECKSUMS:
+  NVActivityIndicatorView: ec7440a57af2450319d3a4181cca7da6fc127064
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
 
-PODFILE CHECKSUM: cfcb05afdbe8d30d09cae89c6f9c07f992c1a85c
+PODFILE CHECKSUM: b6ebd7df466634ccae9bf3786a742b9ae756004f
 
 COCOAPODS: 1.5.3

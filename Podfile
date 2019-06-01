@@ -7,4 +7,5 @@ target 'Movies' do
 
   # Pods for Movies
    pod 'SDWebImage'
+   pod 'NVActivityIndicatorView'
 end
