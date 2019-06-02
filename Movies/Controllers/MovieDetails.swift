@@ -485,9 +485,14 @@ extension MovieDetails: UICollectionViewDelegateFlowLayout{
         let initialDelay = 0.3
         var delay = initialDelay + 0.2 * Double(indexPath.item)
         
-        let numberOfLines = CGFloat(CGFloat(plot?.count ?? 0) / 53.0)
-        if (numberOfLines >= 3.5 && indexPath.item > 2) || (indexPath.item == 4 || (indexPath.item == 3 && (plot == nil || plot?.count == 0))) {
-            delay -= 1
+        if #available(iOS 11.0, *) {
+            let window = UIApplication.shared.keyWindow
+            let topPadding = window?.safeAreaInsets.top
+            let bottomPadding = window?.safeAreaInsets.bottom ?? 0
+            
+            if cell.frame.origin.y > view.frame.height - bottomPadding{
+                delay -= 1
+            }
         }
         
         UIView.animate(withDuration: 0.4, delay: delay, options: UIView.AnimationOptions.curveEaseOut, animations: {
