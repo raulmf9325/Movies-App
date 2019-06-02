@@ -16,8 +16,8 @@ class FifthDetailCell: UICollectionViewCell{
         }
     }
     
-    var navigationController: UINavigationController?
-    
+    var navigationDelegate: NavigationDelegate!
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupViews()
@@ -87,11 +87,8 @@ extension FifthDetailCell: UICollectionViewDelegateFlowLayout, UICollectionViewD
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
-        
-        movieDetails.movie = similar?[indexPath.item]
-        
-        navigationController?.pushViewController(movieDetails, animated: true)
+        guard let movie = similar?[indexPath.item] else {return}
+        navigationDelegate.presentMovieDetails(movie: movie)
     }
 }
 

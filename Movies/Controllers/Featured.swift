@@ -223,17 +223,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     
     // Present Movie Details
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        let cell = collectionView.cellForItem(at: indexPath) as! BaseFeaturedCell
-        
-        let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
-        
-        movieDetails.navigationDelegate = self
-        movieDetails.movie = movieForCellAtIndex(index: indexPath.item)
-        
-        let selectedFrame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: view.frame.height)
-        
-        pushController(selectedFrame: selectedFrame, vc: movieDetails)
+        presentMovieDetails(movie: movieForCellAtIndex(index: indexPath.item))
     }
     
     override func scrollViewDidScroll(_ scrollView: UIScrollView) {
@@ -412,9 +402,9 @@ extension Featured: UINavigationControllerDelegate{
         
         switch operation{
         case .push:
-            return TransitionAnimator(duration: 0.2, isPresenting: true, originFrame: frame)
+            return TransitionAnimator(duration: 0.3, isPresenting: true, originFrame: frame)
         default:
-            return TransitionAnimator(duration: 0.2, isPresenting: false, originFrame: frame)
+            return TransitionAnimator(duration: 0.3, isPresenting: false, originFrame: frame)
         }
     }
     
@@ -423,6 +413,7 @@ extension Featured: UINavigationControllerDelegate{
 protocol NavigationDelegate{
     func pushController(selectedFrame: CGRect, vc: UIViewController)
     func pop(originFrame: CGRect?, animated: Bool)
+    func presentMovieDetails(movie: Movie)
 }
 
 extension Featured: NavigationDelegate{
@@ -437,5 +428,19 @@ extension Featured: NavigationDelegate{
         }
         
         navigationController?.popViewController(animated: animated)
+    }
+
+     func presentMovieDetails(movie: Movie){
+        let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
+        
+        movieDetails.navigationDelegate = self
+        movieDetails.movie = movie
+        
+        // dimsiss any current movie details page
+        let originFrame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: view.frame.height)
+        pop(originFrame: originFrame, animated: true)
+        
+        let selectedFrame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: view.frame.height)
+        pushController(selectedFrame: selectedFrame, vc: movieDetails)
     }
 }

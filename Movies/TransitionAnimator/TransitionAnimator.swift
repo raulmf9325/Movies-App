@@ -33,13 +33,6 @@ class TransitionAnimator: NSObject, UIViewControllerAnimatedTransitioning{
         toView.frame = isPresenting ? originFrame : toView.frame
         toView.layoutIfNeeded()
         
-//        UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: 0.8, initialSpringVelocity: 0, options: UIView.AnimationOptions.curveEaseInOut, animations: {
-//            animatedView.frame = self.isPresenting ? fromView.frame : self.originFrame
-//            animatedView.layoutIfNeeded()
-//        }) { (_) in
-//            transitionContext.completeTransition(!transitionContext.transitionWasCancelled)
-//        }
-        
         UIView.animate(withDuration: duration, animations: {
             animatedView.frame = self.isPresenting ? fromView.frame : self.originFrame
             animatedView.layoutIfNeeded()

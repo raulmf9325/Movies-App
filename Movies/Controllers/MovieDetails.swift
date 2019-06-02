@@ -398,7 +398,7 @@ extension MovieDetails: UICollectionViewDelegateFlowLayout{
                 else{
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
                     cell.similar = similarMovies
-                    cell.navigationController = self.navigationController
+                    cell.navigationDelegate = navigationDelegate
                     return cell
                 }
             }else{
@@ -412,7 +412,7 @@ extension MovieDetails: UICollectionViewDelegateFlowLayout{
             if plot == nil || plot?.count == 0{
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
                 cell.similar = similarMovies
-                cell.navigationController = self.navigationController
+                cell.navigationDelegate = navigationDelegate
                 return cell
             }
             else{
@@ -424,7 +424,7 @@ extension MovieDetails: UICollectionViewDelegateFlowLayout{
                 else{
                     let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
                     cell.similar = similarMovies
-                    cell.navigationController = self.navigationController
+                    cell.navigationDelegate = navigationDelegate
                     return cell
                 }
             }
@@ -432,7 +432,7 @@ extension MovieDetails: UICollectionViewDelegateFlowLayout{
         
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
         cell.similar = similarMovies
-        cell.navigationController = self.navigationController
+        cell.navigationDelegate = navigationDelegate
         return cell
     }
     
