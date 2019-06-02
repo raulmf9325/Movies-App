@@ -493,6 +493,14 @@ extension MovieDetails: UICollectionViewDelegateFlowLayout{
             if cell.frame.origin.y > view.frame.height - bottomPadding{
                 delay -= 1
             }
+            else{
+                if let lastVisibleCell = collectionView.cellForItem(at: IndexPath(item: indexPath.item - 1, section: 0)){
+                    if view.frame.height - lastVisibleCell.frame.maxY <= 20{
+                        delay -= 1
+                    }
+                }
+                
+            }
         }
         
         UIView.animate(withDuration: 0.4, delay: delay, options: UIView.AnimationOptions.curveEaseOut, animations: {
