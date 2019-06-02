@@ -139,6 +139,10 @@ class MovieDetails: UICollectionViewController{
                 self.checkDownload()
             }
         }
+        else{
+            self.posterComplete = true
+            self.checkDownload()
+        }
         
         // fetch backdrop
         if let headerPosterPath = movie?.backdrop_path{
@@ -147,6 +151,13 @@ class MovieDetails: UICollectionViewController{
                 self.backdropComplete = true
                 self.checkDownload()
             }
+        }
+        else{
+            if self.poster.image != UIImage(named: "picture_rect_white"){
+                self.backdrop.image = self.poster.image
+            }
+            self.backdropComplete = true
+            self.checkDownload()
         }
         
         // fetch duration
@@ -234,6 +245,10 @@ class MovieDetails: UICollectionViewController{
 
                 self.similarMovies = similar
             }
+        }
+        else{
+            self.similarMoviesComplete = true
+            self.checkDownload()
         }
         
         // fetch name, rating, duration, release date and plot

@@ -25,7 +25,25 @@ class HeaderView: UICollectionViewCell {
         addSubview(headerImage)
         addConstraintsWithFormat(format: "H:|[v0]|", views: headerImage)
         addConstraintsWithFormat(format: "V:|[v0]|", views: headerImage)
+        addSubview(headerMask)
+        addConstraintsWithFormat(format: "H:|[v0]|", views: headerMask)
+        addConstraintsWithFormat(format: "V:|[v0]|", views: headerMask)
+        dismissMask()
     }
+    
+    private func dismissMask(){
+        UIView.animate(withDuration: 0.3, animations: {
+            self.headerMask.alpha = 0
+        }) { (_) in
+            self.headerMask.removeFromSuperview()
+        }
+    }
+    
+    let headerMask: UIView = {
+        let view = UIView()
+        view.backgroundColor = .white
+        return view
+    }()
     
     let headerImage: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: "picture"))
