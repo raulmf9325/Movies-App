@@ -433,12 +433,12 @@ extension Featured: NavigationDelegate{
      func presentMovieDetails(movie: Movie){
         let movieDetails = MovieDetails(collectionViewLayout: StretchyHeaderLayout())
         
-        movieDetails.navigationDelegate = self
-        movieDetails.movie = movie
-        
         // dimsiss any current movie details page
         let originFrame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: view.frame.height)
         pop(originFrame: originFrame, animated: true)
+        
+        movieDetails.navigationDelegate = self
+        movieDetails.movie = movie
         
         let selectedFrame = CGRect(x: 0, y: view.frame.height, width: view.frame.width, height: view.frame.height)
         pushController(selectedFrame: selectedFrame, vc: movieDetails)

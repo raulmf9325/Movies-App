@@ -50,6 +50,7 @@ class MovieDetails: UICollectionViewController{
     }
     
     fileprivate func startActivityIndicator() {
+        if downloadComplete{ return }
         view.addSubview(activityIndicatorContainer)
         activityIndicatorContainer.translatesAutoresizingMaskIntoConstraints = false
         activityIndicatorContainer.centerXAnchor.constraint(equalTo: collectionView.centerXAnchor).isActive = true
@@ -212,16 +213,22 @@ class MovieDetails: UICollectionViewController{
         
         // fetch cast
         Service.shared.fetchMovieCast(movieID: movieID) { (movieCast) in
-            self.castComplete = true
-            self.checkDownload()
-            guard let casting = movieCast else {return}
+            guard let casting = movieCast else {
+                self.castComplete = true
+                self.checkDownload()
+                return
+            }
             var tmp = [Cast]()
             for (_, profile) in casting.enumerated(){
                 if profile.name != nil{
                     tmp.append(profile)
                 }
             }
-            self.cast = tmp
+            if casting.count > 0{
+                self.cast = tmp
+            }
+            self.castComplete = true
+            self.checkDownload()
         }
         
         // fetch similar movies
@@ -234,16 +241,15 @@ class MovieDetails: UICollectionViewController{
             }
             
             Service.shared.fetchMoviesWithGenres(genres: genreString) { (similarMovies) in
-                self.similarMoviesComplete = true
-                self.checkDownload()
                 var similar = [Movie]()
                 for similarMovie in similarMovies{
                     if similarMovie.title != self.movie?.title{
                         similar.append(similarMovie)
                     }
                 }
-
                 self.similarMovies = similar
+                self.similarMoviesComplete = true
+                self.checkDownload()
             }
         }
         else{
@@ -274,17 +280,29 @@ class MovieDetails: UICollectionViewController{
             if plot != nil && ((plot?.count ?? 0) > 0){
                 numberOfItemsInSection += 1
             }
+            else{
+                print("empty plot")
+            }
             
             if cast != nil{
                 numberOfItemsInSection += 1
             }
+            else{
+                print("empty cast")
+            }
             
-            UIView.animate(withDuration: 0.3, animations: {
-                 self.activityIndicator.alpha = 0
-            }) { (_) in
-                self.activityIndicator.stopAnimating()
-                self.activityIndicatorContainer.removeFromSuperview()
-                self.collectionView.reloadData()
+            if activityIndicator == nil{
+                collectionView.reloadData()
+            }
+            else{
+                UIView.animate(withDuration: 0.3, animations: {
+                     self.activityIndicatorContainer.alpha = 0
+                     self.activityIndicator.alpha = 0
+                }) { (_) in
+                    self.activityIndicator.stopAnimating()
+                    self.activityIndicatorContainer.removeFromSuperview()
+                    self.collectionView.reloadData()
+                }
             }
         }
     }
@@ -434,18 +452,16 @@ extension MovieDetails: UICollectionViewDelegateFlowLayout{
                 cell.navigationDelegate = navigationDelegate
                 return cell
             }
+            else if cast != nil{
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
+                cell.cast = cast
+                return cell
+            }
             else{
-                if cast != nil{
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FourthCellId", for: indexPath) as! FourthDetailCell
-                    cell.cast = cast
-                    return cell
-                }
-                else{
-                    let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
-                    cell.similar = similarMovies
-                    cell.navigationDelegate = navigationDelegate
-                    return cell
-                }
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "FifthCellId", for: indexPath) as! FifthDetailCell
+                cell.similar = similarMovies
+                cell.navigationDelegate = navigationDelegate
+                return cell
             }
         }
         
