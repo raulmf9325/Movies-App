@@ -10,7 +10,6 @@ import UIKit
 
 class FourthDetailCell: UICollectionViewCell{
     
- 
     var cast: [Cast]?{
         didSet{
             collection.reloadData()
@@ -126,9 +125,8 @@ class CastCell: UICollectionViewCell{
     }
     
     func downloadImage(){
-        
         if let path = profile?.profile_path{
-            let stringURL = "https://image.tmdb.org/t/p/w500/\(path)"
+            let stringURL = "https://image.tmdb.org/t/p/w200/\(path)"
             let actorImageURL = URL(string: stringURL)
             actorImage.sd_setImage(with: actorImageURL) { (image, error, cache, url) in }
         }
