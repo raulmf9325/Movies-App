@@ -134,7 +134,7 @@ class MovieDetails: UICollectionViewController{
         
         // fetch poster
         if let path = movie?.poster_path{
-            let imageURL = URL(string: "https://image.tmdb.org/t/p/w500/\(path)")
+            let imageURL = URL(string: "https://image.tmdb.org/t/p/w300/\(path)")
             poster.sd_setImage(with: imageURL) { (image, error, cache, url) in
                 self.posterComplete = true
                 self.checkDownload()
