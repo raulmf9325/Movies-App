@@ -254,8 +254,6 @@ class MovieDetails: UICollectionViewController{
         }
         
         if downloadComplete{
-            print("download complete")
-            
             numberOfItemsInSection = 3
             
             if plot != nil && ((plot?.count ?? 0) > 0){
@@ -266,7 +264,13 @@ class MovieDetails: UICollectionViewController{
                 numberOfItemsInSection += 1
             }
             
-            collectionView.reloadData()
+            UIView.animate(withDuration: 0.3, animations: {
+                 self.activityIndicator.alpha = 0
+            }) { (_) in
+                self.activityIndicator.stopAnimating()
+                self.activityIndicatorContainer.removeFromSuperview()
+                self.collectionView.reloadData()
+            }
         }
     }
     
