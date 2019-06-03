@@ -343,7 +343,11 @@ extension Featured{
         
         if queryText.count == 0{
             searchResult = [Movie]()
-            collectionView.reloadData()
+            self.collectionView.performBatchUpdates({
+                let indexSet = IndexSet(integersIn: 0...0)
+                self.collectionView.reloadSections(indexSet)
+            }, completion: nil)
+            
             return
         }
         
