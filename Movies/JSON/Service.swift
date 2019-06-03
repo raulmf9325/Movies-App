@@ -168,11 +168,11 @@ class Service{
     // MARK: fetch upcoming movies
     func fetchUpcoming(page: Int, completion: @escaping ([Movie]) -> ()){
         
-        let date = DateFormatter()
-        date.dateFormat = "yyyy-MM-dd"
-        let dateString = date.string(from: Date())
+//        let date = DateFormatter()
+//        date.dateFormat = "yyyy-MM-dd"
+//        let dateString = date.string(from: Date())
         
-        let jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&primary_release_date.gte=\(dateString)&lsort_by=popularity.desc&page=\(page)"
+        let jsonUrlString = "https://api.themoviedb.org/3/movie/upcoming?api_key=68ef98a4affa652b311088086fb922db&language=en-US&page=\(page)&region=US"
         
         guard let url = URL(string: jsonUrlString) else {return}
         
