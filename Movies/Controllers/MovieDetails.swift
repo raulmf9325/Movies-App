@@ -261,20 +261,18 @@ class MovieDetails: UICollectionViewController{
         }
         
         if downloadComplete{
-            numberOfItemsInSection = 3
+            numberOfItemsInSection = 2
             
             if plot != nil && ((plot?.count ?? 0) > 0){
                 numberOfItemsInSection += 1
-            }
-            else{
-                print("empty plot")
             }
             
             if cast != nil{
                 numberOfItemsInSection += 1
             }
-            else{
-                print("empty cast")
+            
+            if similarMovies.count > 0{
+                numberOfItemsInSection += 1
             }
             
             if activityIndicator == nil{
