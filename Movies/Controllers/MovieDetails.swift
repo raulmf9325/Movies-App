@@ -248,10 +248,15 @@ class MovieDetails: UICollectionViewController{
         
         // fetch similar movies
             Service.shared.fetchSimilarMovies(movieID: movieID) { (similarMovies) in
-                self.similarMovies = similarMovies
-                self.similarMoviesComplete = true
-                print("similars complete")
-                self.checkDownload()
+                if let similarMovies = similarMovies{
+                    self.similarMovies = similarMovies
+                    self.similarMoviesComplete = true
+                    self.checkDownload()
+                }
+                else{
+                    self.similarMoviesComplete = true
+                    self.checkDownload()
+                }
             }
         
         // fetch name, rating, duration, release date and plot

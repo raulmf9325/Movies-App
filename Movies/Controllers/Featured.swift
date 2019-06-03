@@ -271,16 +271,10 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     private func fetchNewContent(){
         let title = navBar.navBarTitle.text
         
-        /*  To Do
-         */
-        // search
-        if searchResult.count > 0{
-            
-        }
-        
         // Featured
         if title == "Featured"{
             Service.shared.fetchFeatured(featuredPage) { (movies) in
+                guard let movies = movies else {return}
                 self.featuredMovies.append(contentsOf: movies)
                 self.featuredPage += 1
                 self.collectionView.reloadData()
@@ -290,6 +284,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         // In Theaters
         else if title == "In Theaters"{
             Service.shared.fetchInTheaters(page: inTheatersPage) { (movies) in
+                guard let movies = movies else {return}
                 self.inTheatersMovies.append(contentsOf: movies)
                 self.inTheatersPage += 1
                 self.collectionView.reloadData()
@@ -299,6 +294,7 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         // Upcoming
        else if title == "Upcoming"{
             Service.shared.fetchUpcoming(page: upcomingPage) { (movies) in
+                guard let movies = movies else {return}
                 self.upcomingMovies.append(contentsOf: movies)
                 self.upcomingPage += 1
                 self.collectionView.reloadData()
@@ -352,7 +348,11 @@ extension Featured{
         }
         
         Service.shared.fetchMoviesWithQuery(query: queryText) { (movies) in
-            self.searchResult = movies
+            var result = [Movie]()
+            if let movies = movies{
+                result = movies
+            }
+            self.searchResult = result
             self.collectionView.performBatchUpdates({
                 let indexSet = IndexSet(integersIn: 0...0)
                 self.collectionView.reloadSections(indexSet)
