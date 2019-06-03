@@ -12,18 +12,19 @@ class Service{
     
     static let shared = Service()
     
-    func fetchJSON(query: String, completion: @escaping ([Movie]?) -> ()){
+    func fetchJSON(query: String, completion: @escaping ([Movie]?, Int) -> ()){
         guard let url = URL(string: query) else {return}
         URLSession.shared.dataTask(with: url) { (data, response, error) in
             guard let data = data else {
-                completion(nil)
+                completion(nil, 0)
                 return
             }
             do{
                 let website = try JSONDecoder().decode(Website.self, from: data)
                 let movies = website.results
+                let totalNumberOfPages = website.total_pages
                 DispatchQueue.main.async {
-                     completion(movies)
+                    completion(movies, totalNumberOfPages ?? 0)
                 }
             } catch let jsonError{
                 print("Error while parsing JSON \n", jsonError)
@@ -32,51 +33,51 @@ class Service{
     }
     
     // MARK: fetch featured movies
-    func fetchFeatured(_ page: Int, completion: @escaping ([Movie]?) -> ()){
+    func fetchFeatured(_ page: Int, completion: @escaping ([Movie]?, Int) -> ()){
         let URLString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&lsort_by=popularity.desc&page=\(page)&region=US&language=en-US"
-        fetchJSON(query: URLString) { (movies) in
+        fetchJSON(query: URLString) { (movies, totalNumberOfPages) in
             DispatchQueue.main.async {
-                completion(movies)
+                completion(movies, totalNumberOfPages)
             }
         }
     }
     
     // MARK: fetch similar movies
-    func fetchSimilarMovies(movieID: Int, completion: @escaping ([Movie]?) -> ()){
+    func fetchSimilarMovies(movieID: Int, completion: @escaping ([Movie]?, Int) -> ()){
         let URLString = "https://api.themoviedb.org/3/movie/\(movieID)/similar?api_key=68ef98a4affa652b311088086fb922db&language=en-US&page=1"
-        fetchJSON(query: URLString) { (movies) in
+        fetchJSON(query: URLString) { (movies, totalNumberOfPages) in
             DispatchQueue.main.async {
-                completion(movies)
+                completion(movies, totalNumberOfPages)
             }
         }
     }
     
     // MARK: fetch upcoming movies
-    func fetchUpcoming(page: Int, completion: @escaping ([Movie]?) -> ()){
+    func fetchUpcoming(page: Int, completion: @escaping ([Movie]?, Int) -> ()){
         let URLString = "https://api.themoviedb.org/3/movie/upcoming?api_key=68ef98a4affa652b311088086fb922db&language=en-US&page=\(page)&region=US"
-        fetchJSON(query: URLString) { (movies) in
+        fetchJSON(query: URLString) { (movies, totalNumberOfPages) in
             DispatchQueue.main.async {
-                completion(movies)
+                completion(movies, totalNumberOfPages)
             }
         }
     }
     
     // MARK: In theaters
-    func fetchInTheaters(page: Int, completion: @escaping ([Movie]?) -> ()){
+    func fetchInTheaters(page: Int, completion: @escaping ([Movie]?, Int) -> ()){
         let URLString = "https://api.themoviedb.org/3/movie/now_playing?api_key=68ef98a4affa652b311088086fb922db&language=en-US&page=\(page)&region=US"
-        fetchJSON(query: URLString) { (movies) in
+        fetchJSON(query: URLString) { (movies, totalNumberOfPages) in
             DispatchQueue.main.async {
-                completion(movies)
+                completion(movies, totalNumberOfPages)
             }
         }
     }
     
     // MARK: fetch movies from search
-    func fetchMoviesWithQuery(query: String, completion: @escaping ([Movie]?) -> ()){
+    func fetchMoviesWithQuery(query: String, completion: @escaping ([Movie]?, Int) -> ()){
         let URLString = "https://api.themoviedb.org/3/search/movie?api_key=68ef98a4affa652b311088086fb922db&query=\(query)"
-        fetchJSON(query: URLString) { (movies) in
+        fetchJSON(query: URLString) { (movies, totalNumberOfPages)  in
             DispatchQueue.main.async {
-                completion(movies)
+                completion(movies, totalNumberOfPages)
             }
         }
     }

@@ -247,7 +247,7 @@ class MovieDetails: UICollectionViewController{
         }
         
         // fetch similar movies
-            Service.shared.fetchSimilarMovies(movieID: movieID) { (similarMovies) in
+            Service.shared.fetchSimilarMovies(movieID: movieID) { (similarMovies, numOfPages) in
                 if let similarMovies = similarMovies{
                     self.similarMovies = similarMovies
                     self.similarMoviesComplete = true

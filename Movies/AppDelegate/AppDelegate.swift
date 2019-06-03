@@ -79,9 +79,9 @@ extension AppDelegate{
                 upcomingMovies = [Movie]()
                 inTheatersMovies = [Movie]()
             }
-            Service.shared.fetchFeatured(page) { (featuredMovies) in
-                Service.shared.fetchUpcoming(page: page, completion: { (upcomingMovies) in
-                    Service.shared.fetchInTheaters(page: page, completion: { (inTheatersMovies) in
+            Service.shared.fetchFeatured(page) { (featuredMovies, numOfPages) in
+                Service.shared.fetchUpcoming(page: page, completion: { (upcomingMovies, numOfPages) in
+                    Service.shared.fetchInTheaters(page: page, completion: { (inTheatersMovies, numOfPages) in
                         self.featuredMovies.append(contentsOf: featuredMovies ?? [Movie]())
                         self.upcomingMovies.append(contentsOf: upcomingMovies ?? [Movie]())
                         self.inTheatersMovies.append(contentsOf: inTheatersMovies ?? [Movie]())

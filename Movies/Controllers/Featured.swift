@@ -17,6 +17,10 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
     var upcomingMovies = [Movie]()
     var inTheatersMovies = [Movie]()
     
+    var totalNumberOfFeaturedPages = 11
+    var totalNumberOfUpcomingPages = 11
+    var totalNumberOfInTheatersPages = 11
+    
     var searchResult = [Movie]()
     
     var featuredPage = 11
@@ -273,31 +277,38 @@ class Featured: UICollectionViewController, UICollectionViewDelegateFlowLayout, 
         
         // Featured
         if title == "Featured"{
-            Service.shared.fetchFeatured(featuredPage) { (movies) in
-                guard let movies = movies else {return}
-                self.featuredMovies.append(contentsOf: movies)
-                self.featuredPage += 1
-                self.collectionView.reloadData()
+            if featuredPage <= totalNumberOfFeaturedPages{
+                Service.shared.fetchFeatured(featuredPage) { (movies, numOfPages) in
+                    guard let movies = movies else {return}
+                    self.totalNumberOfFeaturedPages = numOfPages
+                    self.featuredMovies.append(contentsOf: movies)
+                    self.featuredPage += 1
+                    self.collectionView.reloadData()
+                }
             }
         }
         
         // In Theaters
         else if title == "In Theaters"{
-            Service.shared.fetchInTheaters(page: inTheatersPage) { (movies) in
-                guard let movies = movies else {return}
-                self.inTheatersMovies.append(contentsOf: movies)
-                self.inTheatersPage += 1
-                self.collectionView.reloadData()
+            if inTheatersPage <= totalNumberOfInTheatersPages{
+                Service.shared.fetchInTheaters(page: inTheatersPage) { (movies, numOfPages) in
+                    guard let movies = movies else {return}
+                    self.inTheatersMovies.append(contentsOf: movies)
+                    self.inTheatersPage += 1
+                    self.collectionView.reloadData()
+                }
             }
         }
         
         // Upcoming
        else if title == "Upcoming"{
-            Service.shared.fetchUpcoming(page: upcomingPage) { (movies) in
-                guard let movies = movies else {return}
-                self.upcomingMovies.append(contentsOf: movies)
-                self.upcomingPage += 1
-                self.collectionView.reloadData()
+            if upcomingPage <= totalNumberOfUpcomingPages{
+                Service.shared.fetchUpcoming(page: upcomingPage) { (movies, numOfPages) in
+                    guard let movies = movies else {return}
+                    self.upcomingMovies.append(contentsOf: movies)
+                    self.upcomingPage += 1
+                    self.collectionView.reloadData()
+                }
             }
         }
     }
@@ -347,7 +358,7 @@ extension Featured{
             return
         }
         
-        Service.shared.fetchMoviesWithQuery(query: queryText) { (movies) in
+        Service.shared.fetchMoviesWithQuery(query: queryText) { (movies, numOfPages) in
             var result = [Movie]()
             if let movies = movies{
                 result = movies
