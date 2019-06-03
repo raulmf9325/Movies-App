@@ -138,9 +138,11 @@ class MovieDetails: UICollectionViewController{
             poster.sd_setImage(with: imageURL) { (image, error, cache, url) in
                 self.posterComplete = true
                 self.checkDownload()
+                print("poster complete")
             }
         }
         else{
+            print("poster complete")
             self.posterComplete = true
             self.checkDownload()
         }
@@ -151,12 +153,14 @@ class MovieDetails: UICollectionViewController{
             backdrop.sd_setImage(with: imageURL) { (image, error, cache, url) in
                 self.backdropComplete = true
                 self.checkDownload()
+                print("backdrop complete")
             }
         }
         else{
             if self.poster.image != UIImage(named: "picture_rect_white"){
                 self.backdrop.image = self.poster.image
             }
+            print("backdrop complete")
             self.backdropComplete = true
             self.checkDownload()
         }
@@ -170,6 +174,7 @@ class MovieDetails: UICollectionViewController{
                 self.duration = "\(hours)h \(minutes)min"
             }
             self.checkDownload()
+            print("duration complete")
         }
         
         // fetch genres
@@ -177,6 +182,7 @@ class MovieDetails: UICollectionViewController{
             guard let genres = genres else {
                 self.genres += "not available"
                 self.genresComplete = true
+                print("genres complete")
                 self.checkDownload()
                 return
             }
@@ -200,6 +206,7 @@ class MovieDetails: UICollectionViewController{
             else{
                 self.genres += "not available"
             }
+            print("genres complete")
             self.genresComplete = true
             self.checkDownload()
         }
@@ -208,6 +215,7 @@ class MovieDetails: UICollectionViewController{
         Service.shared.fetchMovieTrailerURL(movieID: movieID) { (trailers) in
             self.trailerComplete = true
             self.checkDownload()
+            print("trailer complete")
             guard let trailers = trailers else {return}
             if trailers.count > 0{
                 if let key = trailers[0].key{
@@ -221,6 +229,7 @@ class MovieDetails: UICollectionViewController{
             guard let casting = movieCast else {
                 self.castComplete = true
                 self.checkDownload()
+                print("cast complete")
                 return
             }
             var tmp = [Cast]()
@@ -232,6 +241,7 @@ class MovieDetails: UICollectionViewController{
             if casting.count > 0{
                 self.cast = tmp
             }
+            print("cast complete")
             self.castComplete = true
             self.checkDownload()
         }
@@ -240,6 +250,7 @@ class MovieDetails: UICollectionViewController{
             Service.shared.fetchSimilarMovies(movieID: movieID) { (similarMovies) in
                 self.similarMovies = similarMovies
                 self.similarMoviesComplete = true
+                print("similars complete")
                 self.checkDownload()
             }
         
