@@ -14,8 +14,7 @@ class Service{
     
     // MARK: fetch featured movies
     func fetchFeatured(_ page: Int, completion: @escaping ([Movie]) -> ()){
-       
-        let jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&lsort_by=popularity.desc&page=\(page)"
+        let jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&lsort_by=popularity.desc&page=\(page)&region=US&language=en-US"
         guard let url = URL(string: jsonUrlString) else {return}
         
         URLSession.shared.dataTask(with: url) { (data, response, error) in
@@ -167,11 +166,6 @@ class Service{
     
     // MARK: fetch upcoming movies
     func fetchUpcoming(page: Int, completion: @escaping ([Movie]) -> ()){
-        
-//        let date = DateFormatter()
-//        date.dateFormat = "yyyy-MM-dd"
-//        let dateString = date.string(from: Date())
-        
         let jsonUrlString = "https://api.themoviedb.org/3/movie/upcoming?api_key=68ef98a4affa652b311088086fb922db&language=en-US&page=\(page)&region=US"
         
         guard let url = URL(string: jsonUrlString) else {return}
@@ -197,19 +191,7 @@ class Service{
     
     // MARK: In theaters
     func fetchInTheaters(page: Int, completion: @escaping ([Movie]) -> ()){
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        
-        let date = Date()
-        let currentDate = dateFormatter.string(from: date)
-       
-        if let lastMonthDate = Calendar.current.date(byAdding: .month, value: -1, to: date){
-            let calendar = Calendar.current
-            let year = calendar.component(.year, from: lastMonthDate)
-            let month = calendar.component(.month, from: lastMonthDate)
-            let day = calendar.component(.day, from: lastMonthDate)
-            
-            let jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&primary_release_date.gte=\(year)-\(month)-\(day)&primary_release_date.lte=\(currentDate)&page=\(page)"
+            let jsonUrlString = "https://api.themoviedb.org/3/movie/now_playing?api_key=68ef98a4affa652b311088086fb922db&language=en-US&page=\(page)&region=US"
            
             guard let url = URL(string: jsonUrlString) else {return}
             
@@ -231,8 +213,6 @@ class Service{
                 }
                 }.resume()
         }
-        
-    }
     
     // MARK: fetch movie trailer youtube ID
     func fetchMovieTrailerURL(movieID: Int, completion: @escaping ([trailers]?) -> ()){
@@ -258,6 +238,7 @@ class Service{
 }
 
 struct Website: Decodable{
+    var total_pages: Int?
     var results: [Movie]?
 }
 
