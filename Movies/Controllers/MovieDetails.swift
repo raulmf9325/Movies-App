@@ -174,9 +174,12 @@ class MovieDetails: UICollectionViewController{
         
         // fetch genres
         Service.shared.fetchMovieGenres(movieID: movieID) { (genres) in
-            self.genresComplete = true
-            self.checkDownload()
-            guard let genres = genres else {return}
+            guard let genres = genres else {
+                self.genres += "not available"
+                self.genresComplete = true
+                self.checkDownload()
+                return
+            }
             if genres.count > 0{
                 var genre = ""
                 for i in 0 ..< genres.count{
@@ -197,6 +200,8 @@ class MovieDetails: UICollectionViewController{
             else{
                 self.genres += "not available"
             }
+            self.genresComplete = true
+            self.checkDownload()
         }
         
         // fetch trailer URL
@@ -232,30 +237,11 @@ class MovieDetails: UICollectionViewController{
         }
         
         // fetch similar movies
-        if let genres = movie?.genre_ids{
-            var genreString = ""
-            for index in 0 ... 2{
-                if index + 1 <= genres.count{
-                    genreString.append(contentsOf: "\(genres[index]),")
-                }
-            }
-            
-            Service.shared.fetchMoviesWithGenres(genres: genreString) { (similarMovies) in
-                var similar = [Movie]()
-                for similarMovie in similarMovies{
-                    if similarMovie.title != self.movie?.title{
-                        similar.append(similarMovie)
-                    }
-                }
-                self.similarMovies = similar
+            Service.shared.fetchSimilarMovies(movieID: movieID) { (similarMovies) in
+                self.similarMovies = similarMovies
                 self.similarMoviesComplete = true
                 self.checkDownload()
             }
-        }
-        else{
-            self.similarMoviesComplete = true
-            self.checkDownload()
-        }
         
         // fetch name, rating, duration, release date and plot
         movieName = movie?.title

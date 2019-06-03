@@ -111,16 +111,9 @@ class Service{
     }
     
     // MARK: fetch similar movies
-    func fetchMoviesWithGenres(genres: String?, completion: @escaping ([Movie]) -> ()){
+    func fetchSimilarMovies(movieID: Int, completion: @escaping ([Movie]) -> ()){
         
-        var jsonUrlString = String()
-        
-        if let genres = genres{
-            jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&with_genres=\(genres)&lsort_by=popularity.desc"
-        }
-        else{
-            jsonUrlString = "https://api.themoviedb.org/3/discover/movie?api_key=68ef98a4affa652b311088086fb922db&lsort_by=popularity.desc"
-        }
+        var jsonUrlString = "https://api.themoviedb.org/3/movie/\(movieID)/similar?api_key=68ef98a4affa652b311088086fb922db&language=en-US&page=1"
         
         guard let url = URL(string: jsonUrlString) else {return}
         
